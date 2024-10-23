@@ -11,6 +11,11 @@ const v1 = '/api/v1';
 
 const app = express();
 
+app.get('/', (req, res) => {
+  // Endpoint de prueba de la API
+  res.send('Hello World');
+})
+
 // TODO: middlewares de express
 app.use(morgan('dev'));
 app.use(cookieParser());
