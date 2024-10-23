@@ -1,0 +1,17 @@
+version: '3.7'
+
+services:
+  api-login-v1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: login:v1.0
+    restart: always
+    container_name: api_login_v1
+    environment:
+      - TZ=America/Bogota
+    networks:
+      - red-gane-int
+networks:
+  red-gane-int:
+    external: true
