@@ -12,11 +12,11 @@ const User = z.object({
   document: z.string({
     invalid_type_error: 'El documento es requerido',
     required_error: 'El documento es requerido',
-  }).min(6, { message: 'El documento es requerido' }),
+  }).transform((val) => parseInt(val, 10)).refine((value) => !isNaN(value)),
   phone: z.string({
     invalid_type_error: 'El teléfono es requerido',
     required_error: 'El teléfono es requerido',
-  }).min(6, { message: 'El teléfono es requerido' }),
+  }).transform((val) => parseInt(val, 10)).refine((value) => !isNaN(value)),
   email: z.string({
     invalid_type_error: 'El correo debe ser una cadena de texto',
     required_error: 'El correo es requerido',
@@ -26,15 +26,15 @@ const User = z.object({
   company: z.string({
     invalid_type_error: 'La compañía es requerida',
     required_error: 'La compañía es requerida',
-  }).min(0).max(2),
+  }).transform((val) => parseInt(val, 10)).refine((value) => !isNaN(value)),
   process: z.string({
     invalid_type_error: 'El proceso es requerido',
     required_error: 'El proceso es requerido',
-  }).min(0).max(12),
+  }).transform((val) => parseInt(val, 10)).refine((value) => !isNaN(value)),
   sub_process: z.string({
     invalid_type_error: 'El sub-proceso es requerido',
     required_error: 'El sub proceso es requerido',
-  }).min(0).max(30)
+  }).transform((val) => parseInt(val, 10)).refine((value) => !isNaN(value)),
 });
 
 const UserLogin = z.object({
