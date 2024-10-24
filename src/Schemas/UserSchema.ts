@@ -9,11 +9,11 @@ const User = z.object({
     invalid_type_error: 'El apellido debe ser una cadena de texto',
     required_error: 'El apellido es requerido',
   }).min(4, { message: 'Los apellidos son requeridos' }),
-  document: z.number({
+  document: z.string({
     invalid_type_error: 'El documento es requerido',
     required_error: 'El documento es requerido',
   }).min(6, { message: 'El documento es requerido' }),
-  phone: z.number({
+  phone: z.string({
     invalid_type_error: 'El teléfono es requerido',
     required_error: 'El teléfono es requerido',
   }).min(6, { message: 'El teléfono es requerido' }),
@@ -23,18 +23,18 @@ const User = z.object({
   }).refine((value) => value.includes('@'), {
     message: 'El correo debe contener un @',
   }),
-  company: z.number({
+  company: z.string({
     invalid_type_error: 'La compañía es requerida',
     required_error: 'La compañía es requerida',
-  }).int().min(0).max(2),
-  process: z.number({
+  }).min(0).max(2),
+  process: z.string({
     invalid_type_error: 'El proceso es requerido',
     required_error: 'El proceso es requerido',
-  }).int().min(0).max(12),
-  sub_process: z.number({
+  }).min(0).max(12),
+  sub_process: z.string({
     invalid_type_error: 'El sub-proceso es requerido',
     required_error: 'El sub proceso es requerido',
-  }).int().min(0).max(30)
+  }).min(0).max(30)
 });
 
 const UserLogin = z.object({
