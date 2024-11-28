@@ -1,4 +1,4 @@
-FROM node:lts-slim
+FROM node:lts
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -6,8 +6,8 @@ WORKDIR /usr/src/app
 # Install app dependencies
 COPY . .
 
-RUN yarn && yarn build
+RUN npm install && node --run build
 
 EXPOSE 80
 
-CMD [ "yarn", "start" ]
+CMD [ "npm", "start" ]
