@@ -1,3 +1,4 @@
+import { POWERBI } from './connections/login_unificado';
 import { PORT, VERSION } from './configs/envSchema';
 import { userRouter } from './routes/user.routes';
 import corsMiddleware from './configs/corsConfig';
@@ -20,3 +21,8 @@ app.use(VERSION, userRouter);
 app.listen(PORT, () => {
   console.log(`Server iniciado en el puerto http://localhost:${PORT}`);
 });
+
+// Test de conexión a la base de datos de PowerBI
+POWERBI.authenticate()
+  .then(() => console.log('Conexión a la base de datos establecida'))
+  .catch(error => console.error('No se pudo conectar a la base de datos:', error));

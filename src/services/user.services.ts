@@ -1,11 +1,9 @@
 import { UserType, UserLoginType } from '../Schemas/UserSchema';
-import { CustomError } from '../class/ClassErrorSql';
+import { SALT } from '../configs/envSchema';
 import { User } from '../model/user.model';
 import bcrypt from 'bcryptjs';
 
-const BCRYPT_SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS as string, 10);
 const USERNAME_PREFIX = 'CP';
-
 
 const generateUsername = (document: string): string => {
   return `${USERNAME_PREFIX}${document}`;
@@ -14,7 +12,7 @@ const generateUsername = (document: string): string => {
 const generatePassword = (document: string): string => {
   const threeLastDocument = document.slice(-3);
   const pass = `${USERNAME_PREFIX}${threeLastDocument}`;
-  return bcrypt.hashSync(pass, BCRYPT_SALT_ROUNDS);
+  return bcrypt.hashSync(pass, SALT);
 };
 
 export const registerUserServices = async (user: UserType) => {
@@ -23,37 +21,30 @@ export const registerUserServices = async (user: UserType) => {
   const state = true;
 
   await User.sync();
+
   const userCreated = await User.create({ ...user, username, password, state });
 
   return userCreated;
 };
 
 export const loginUserServices = async (user: UserLoginType) => {
-  try {
-    const userFound = await User.findOne({ where: { username: user.username } });
+  const userFound = await User.findOne({ where: { username: user.username } });
 
-    if (!userFound) {
-      throw new CustomError('Usuario no encontrado', 'El usuario proporcionado no existe.');
-    }
-
-    const passwordMatch = bcrypt.compareSync(user.password, userFound.password);
-
-    if (!passwordMatch) {
-      throw new CustomError('Contraseña incorrecta', 'La contraseña proporcionada no coincide con la registrada.');
-    }
-
-    if (userFound.state === false) {
-      throw new CustomError('Usuario inactivo', 'El usuario se encuentra inactivo y no puede iniciar sesión.');
-    }
-
-    return userFound;
-  } catch (error) {
-    if (error instanceof CustomError) {
-      throw error;
-    } else {
-      throw new CustomError('Error del servidor', 'Ocurrió un error inesperado en el servidor.');
-    }
+  if (!userFound) {
+    throw new Error('Usuario no encontrado o no existe');
   }
+
+  const passwordMatch = bcrypt.compareSync(user.password, userFound.password);
+
+  if (!passwordMatch) {
+    throw new Error('Contraseña incorrecta o no coincide');
+  }
+
+  if (userFound.state === false) {
+    throw new Error('Usuario se encuentra inactivo');
+  }
+
+  return userFound;
 }
 
 export const getUserByToken = async (token: string) => {
@@ -101,7 +92,7 @@ export const resetPasswordService = async (token: string, password: string) => {
     if (now > user.dataValues.resetPasswordExpires) throw new Error('Token expirado, se debe solicitar uno nuevo');
   }
 
-  const hasPass = bcrypt.hashSync(password, BCRYPT_SALT_ROUNDS);
+  const hasPass = bcrypt.hashSync(password, SALT);
 
   const result = User.update({ password: hasPass, resetPasswordToken: null, resetPasswordExpires: null },
     { where: { resetPasswordToken: token } });

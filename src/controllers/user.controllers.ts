@@ -10,46 +10,39 @@ import jwt from 'jsonwebtoken'
 
 import { Company, Procces, Sub_Procces } from '../utils/Definiciones'
 import { verifyToken } from '../utils/verifyToken'
-import { isMainError } from '../utils/funtions'
-import { CustomError } from '../class/ClassErrorSql'
 
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const result = await validateUser(req.body)
+    const { success, data, error } = await validateUser(req.body)
 
-    if (result.error) {
-      const meesage = result.error.issues[0].message
-      return res.status(400).json({ error: meesage || 'Error en los datos enviados' })
+    if (!success) {
+      return res.status(400).json({ message: error.format() })
     }
 
-    const userCreated = await registerUserServices(result.data)
+    const newUser = await registerUserServices(data)
 
-    if (!userCreated) {
-      return res.status(400).json({ message: 'Error al crear el usuario' })
+    if (!newUser) {
+      return res.status(500).json({ message: 'Internal server error' })
     }
 
     return res.status(201).json('Usuario creado correctamente')
-  } catch (error: unknown) {
-    console.log(error);
-    if (isMainError(error)) {
-      return res.status(400).json({ errorCode: error.parent.code, message: error.parent.sqlMessage })
-    } else if (error instanceof Error) {
-      return res.status(500).json({ message: 'Internal server error' })
-    } else {
-      return res.status(500).json({ message: 'Error desconocido contacte al administrado del sistema' })
-    }
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({ message: 'Internal server error' })
   }
 }
 
 export const loginUser = async (req: Request, res: Response) => {
   try {
-    const result = await validateUserLogin(req.body);
+    const { success, data, error } = await validateUserLogin(req.body);
 
-    if (result.error) return res.status(400).json(result.error.issues[0].message);
+    if (!success) {
+      return res.status(400).json({ message: error.format() });
+    }
 
-    const user = await loginUserServices(result.data);
+    const user = await loginUserServices(data);
 
-    const app = result.data.app;
+    const app = data.app;
 
     const usuario = {
       id: user.id,
@@ -71,14 +64,12 @@ export const loginUser = async (req: Request, res: Response) => {
       })
         .status(200).json({ message: 'Login successful' });
     });
-  } catch (error: unknown) {
-    if (error instanceof CustomError) {
-      return res.status(400).json({ message: error.message, description: error.description });
-    }
-
+  } catch (error) {
+    console.log(error);
     if (error instanceof Error) {
-      return res.status(500).json({ message: 'Internal server error' });
+      return res.status(400).json({ message: error.message });
     }
+    return res.status(500).json({ message: 'Internal server error' });
   }
 }
 

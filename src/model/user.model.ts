@@ -1,4 +1,4 @@
-import { login_unif } from '../connections/login_unificado'
+import { POWERBI } from '../connections/login_unificado'
 import { Model, InferAttributes, InferCreationAttributes, DataTypes } from 'sequelize'
 
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
@@ -40,8 +40,8 @@ User.init({
   createdAt: { type: DataTypes.DATE, allowNull: true, defaultValue: DataTypes.NOW },
   updatedAt: { type: DataTypes.DATE, allowNull: true, defaultValue: DataTypes.NOW },
 }, {
-  sequelize: login_unif,
-  modelName: 'login_users',
+  sequelize: POWERBI,
+  tableName: 'login_users'
 })
 
 export { User }
