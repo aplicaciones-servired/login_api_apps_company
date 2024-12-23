@@ -1,12 +1,11 @@
-import { findUserServices, loginUserServices, registerUserServices, findUserServicesById, forgotPasswordServices, asignTokenServices, resetPasswordService } from '../services/user.services'
+import { JWT_SECRECT, JWT_EXPIRES, ENTORNO } from '../configs/envSchema'
+import {
+  findUserServices, loginUserServices, registerUserServices, findUserServicesById,
+  forgotPasswordServices, asignTokenServices, resetPasswordService
+} from '../services/user.services'
 import { validateUser, validateUserLogin } from '../Schemas/UserSchema'
 import { Request, Response } from 'express'
 import cryto from 'node:crypto'
-
-const JWT_EXPIRES = process.env.JWT_EXPIRES_IN as string
-const JWT_SECRET = process.env.JWT_SECRET as string
-const NODE_ENV = process.env.ENTORNO as string
-
 import jwt from 'jsonwebtoken'
 
 import { Company, Procces, Sub_Procces } from '../utils/Definiciones'
@@ -64,11 +63,11 @@ export const loginUser = async (req: Request, res: Response) => {
       sub_process: Sub_Procces(user.sub_process),
     }
 
-    jwt.sign(usuario, JWT_SECRET, { expiresIn: JWT_EXPIRES }, (err, token) => {
+    jwt.sign(usuario, JWT_SECRECT, { expiresIn: JWT_EXPIRES }, (err, token) => {
       if (err) throw err;
       return res.cookie(app, token, {
-        sameSite: NODE_ENV === 'dev' ? 'lax' : 'none',
-        secure: NODE_ENV === 'dev' ? false : true,
+        sameSite: ENTORNO === 'dev' ? 'lax' : 'none',
+        secure: ENTORNO === 'dev' ? false : true,
       })
         .status(200).json({ message: 'Login successful' });
     });
@@ -84,7 +83,7 @@ export const loginUser = async (req: Request, res: Response) => {
 }
 
 export const UserByToken = async (req: Request, res: Response) => {
-  
+
   try {
     const app: string = req.query.app as string;
     const token = req.cookies[app];
@@ -94,7 +93,7 @@ export const UserByToken = async (req: Request, res: Response) => {
     }
 
     try {
-      const decoded = await verifyToken(token, JWT_SECRET);
+      const decoded = await verifyToken(token, JWT_SECRECT);
       return res.status(200).json(decoded);
     } catch (err) {
       if (err instanceof jwt.TokenExpiredError) {
@@ -184,7 +183,7 @@ export const findUserById = async (req: Request, res: Response) => {
 
     return res.status(200).json(user);
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error' });
+    return res.status(500).json({ message: 'Internal server error', error });
   }
 }
 

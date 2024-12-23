@@ -18,18 +18,14 @@ const generatePassword = (document: string): string => {
 };
 
 export const registerUserServices = async (user: UserType) => {
-  try {
-    const username = generateUsername(user.document.toString());
-    const password = generatePassword(user.document.toString());
-    const state = true;
+  const username = generateUsername(user.document.toString());
+  const password = generatePassword(user.document.toString());
+  const state = true;
 
-    await User.sync();
-    const userCreated = await User.create({ ...user, username, password, state });
+  await User.sync();
+  const userCreated = await User.create({ ...user, username, password, state });
 
-    return userCreated;
-  } catch (error) {
-    throw error;
-  }
+  return userCreated;
 };
 
 export const loginUserServices = async (user: UserLoginType) => {
@@ -61,79 +57,54 @@ export const loginUserServices = async (user: UserLoginType) => {
 }
 
 export const getUserByToken = async (token: string) => {
-  try {
-    const user = await User.findOne({ where: { username: token } });
+  const user = await User.findOne({ where: { username: token } });
 
-    if (!user) {
-      throw new Error('Usuario no encontrado');
-    }
-
-    return user;
-  } catch (error) {
-    throw error;
+  if (!user) {
+    throw new Error('Usuario no encontrado');
   }
+  return user;
 }
 
 export const findUserServices = async () => {
-  try {
-    const users = await User.findAll({ attributes: { exclude: ['password', 'password2', 'resetPasswordToken', 'resetPasswordExpires'] } });
-    return users;
-  } catch (error) {
-    throw error;
-  }
+  const users = await User.findAll({ attributes: { exclude: ['password', 'password2', 'resetPasswordToken', 'resetPasswordExpires'] } });
+  return users;
 }
 
 export const findUserServicesById = async (id: string) => {
-  try {
-    const user = await User.findOne({ where: { document: id }, attributes: { exclude: ['password', 'password2', 'resetPasswordToken', 'resetPasswordExpires'] } })
-    return user;
-  } catch (error) {
-    throw error;
-  }
+  const user = await User.findOne({ where: { document: id }, attributes: { exclude: ['password', 'password2', 'resetPasswordToken', 'resetPasswordExpires'] } })
+  return user;
 }
 
 export const forgotPasswordServices = async (document: number, email: string) => {
-  try {
-    const user = await User.findOne({ where: { document, email } });
+  const user = await User.findOne({ where: { document, email } });
 
-    if (!user) {
-      throw new Error('Usuario no encontrado documento o correo invalidos');
-    }
-
-    return user;
-  } catch (error) {
-    throw error;
+  if (!user) {
+    throw new Error('Usuario no encontrado documento o correo invalidos');
   }
+  return user;
 }
 
 export const asignTokenServices = async (token: string, time: Date, document: number) => {
-  try {
-    const result = await User.update({ resetPasswordToken: token, resetPasswordExpires: time },
-      { where: { document } });
-
-    return result;
-  } catch (error) {
-    throw error;
-  }
+  const result = await User.update(
+    { resetPasswordToken: token, resetPasswordExpires: time },
+    { where: { document } });
+  return result;
 }
 
 export const resetPasswordService = async (token: string, password: string) => {
-  try {
-    const user = await User.findOne({ where: { resetPasswordToken: token } });
-    if (!user) throw new Error('Token invalido');
 
-    const now = new Date();
-    if (user.dataValues.resetPasswordExpires){
-      if (now > user.dataValues.resetPasswordExpires) throw new Error('Token expirado, se debe solicitar uno nuevo');
-    }
+  const user = await User.findOne({ where: { resetPasswordToken: token } });
+  if (!user) throw new Error('Token invalido');
 
-    const hasPass = bcrypt.hashSync(password, BCRYPT_SALT_ROUNDS);
-
-    const result = User.update({ password: hasPass, resetPasswordToken: null, resetPasswordExpires: null },
-      { where: { resetPasswordToken: token } });
-
-    return result;
-  } catch (error) {
-    throw error;
+  const now = new Date();
+  if (user.dataValues.resetPasswordExpires) {
+    if (now > user.dataValues.resetPasswordExpires) throw new Error('Token expirado, se debe solicitar uno nuevo');
   }
+
+  const hasPass = bcrypt.hashSync(password, BCRYPT_SALT_ROUNDS);
+
+  const result = User.update({ password: hasPass, resetPasswordToken: null, resetPasswordExpires: null },
+    { where: { resetPasswordToken: token } });
+
+  return result;
 }
