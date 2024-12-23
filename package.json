@@ -4,12 +4,9 @@
   "main": "index.js",
   "repository": "https://github.com/AplicacionesMultired/login_unificado.git",
   "author": "llOrTeGall <IvanOrtega_97@hotmail.com>",
-  
   "collaborators": [
-    "Cebastian Perez <cebastian@gmail.com>",
-    "Pepito Perez <example@gmail.com>"
+    "Cebastian Perez <cebastian@gmail.com>"
   ],
-
   "license": "MIT",
   "scripts": {
     "start": "node --env-file=.env ./dist/index.js",
@@ -18,11 +15,10 @@
   },
   "dependencies": {
     "bcryptjs": "2.4.3",
-    "cookie-parser": "1.4.6",
+    "cookie-parser": "1.4.7",
     "cors": "2.8.5",
-    "express": "4.21.0",
+    "express": "4.21.2",
     "jsonwebtoken": "9.0.2",
-    "mariadb": "3.3.1",
     "mysql2": "3.11.0",
     "sequelize": "6.37.3",
     "zod": "3.23.8"

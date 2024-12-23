@@ -1,6 +1,5 @@
+import { CORS_ORIGINS } from './envSchema';
 import cors from 'cors';
-
-const CORS_ORIGINS: string[] = (process.env.CORS_ORIGINS as string).split(',');
 
 const corsOptions = {
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
