@@ -1,9 +1,11 @@
+import { ValidationErrorItem, UniqueConstraintError } from 'sequelize';
 import { UserType, UserLoginType } from '../Schemas/UserSchema';
 import { SALT } from '../configs/envSchema';
 import { User } from '../model/user.model';
 import bcrypt from 'bcryptjs';
 
 const USERNAME_PREFIX = 'CP';
+const SALT_ROUNDS = bcrypt.genSaltSync(parseInt(SALT));
 
 const generateUsername = (document: string): string => {
   return `${USERNAME_PREFIX}${document}`;
@@ -12,20 +14,32 @@ const generateUsername = (document: string): string => {
 const generatePassword = (document: string): string => {
   const threeLastDocument = document.slice(-3);
   const pass = `${USERNAME_PREFIX}${threeLastDocument}`;
-  return bcrypt.hashSync(pass, SALT);
+  return bcrypt.hashSync(pass, SALT_ROUNDS);
 };
 
 export const registerUserServices = async (user: UserType) => {
+  const userFound = await User.findOne({ where: { document: user.document } });
+
+  if (userFound) {
+    throw new Error('El usuario ya se encuentra registrado con el documento ingresado');
+  }
+
   const username = generateUsername(user.document.toString());
   const password = generatePassword(user.document.toString());
   const state = true;
 
   await User.sync();
 
-  const userCreated = await User.create({ ...user, username, password, state });
-
-  return userCreated;
-};
+  try {
+    const userCreated = await User.create({ ...user, username, password, state });
+    return userCreated;
+  } catch (err) {
+    if (err instanceof UniqueConstraintError) {
+      const errors: ValidationErrorItem = err.errors[0];
+      throw new Error(`El campo [ ${errors.path} ] ya se encuentra registrado con valor ${errors.value}`);
+    };
+  }
+}
 
 export const loginUserServices = async (user: UserLoginType) => {
   const userFound = await User.findOne({ where: { username: user.username } });

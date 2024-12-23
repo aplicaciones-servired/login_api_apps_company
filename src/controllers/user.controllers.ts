@@ -1,15 +1,11 @@
+import { findUserServices, loginUserServices, registerUserServices, findUserServicesById, forgotPasswordServices, asignTokenServices, resetPasswordService } from '../services/user.services'
 import { JWT_SECRECT, JWT_EXPIRES, ENTORNO } from '../configs/envSchema'
-import {
-  findUserServices, loginUserServices, registerUserServices, findUserServicesById,
-  forgotPasswordServices, asignTokenServices, resetPasswordService
-} from '../services/user.services'
 import { validateUser, validateUserLogin } from '../Schemas/UserSchema'
+import { Company, Procces, Sub_Procces } from '../utils/Definiciones'
+import { verifyToken } from '../utils/verifyToken'
 import { Request, Response } from 'express'
 import cryto from 'node:crypto'
 import jwt from 'jsonwebtoken'
-
-import { Company, Procces, Sub_Procces } from '../utils/Definiciones'
-import { verifyToken } from '../utils/verifyToken'
 
 export const createUser = async (req: Request, res: Response) => {
   try {
@@ -19,15 +15,13 @@ export const createUser = async (req: Request, res: Response) => {
       return res.status(400).json({ message: error.format() })
     }
 
-    const newUser = await registerUserServices(data)
-
-    if (!newUser) {
-      return res.status(500).json({ message: 'Internal server error' })
-    }
+    await registerUserServices(data)
 
     return res.status(201).json('Usuario creado correctamente')
   } catch (error) {
-    console.log(error)
+    if (error instanceof Error) {
+      return res.status(400).json({ message: error.message })
+    }
     return res.status(500).json({ message: 'Internal server error' })
   }
 }
