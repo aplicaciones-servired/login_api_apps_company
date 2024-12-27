@@ -24,16 +24,12 @@ export const createUser = async (req: Request, res: Response) => {
 }
 
 export const loginUser = async (req: Request, res: Response) => {
+  const { success, data, error } = await validateUserLogin(req.body);
+
+  if (!success) return res.status(400).json({ message: error.format() });
+
   try {
-    const { success, data, error } = await validateUserLogin(req.body);
-
-    if (!success) {
-      return res.status(400).json({ message: error.format() });
-    }
-
     const user = await loginUserServices(data);
-
-    const app = data.app;
 
     const usuario = {
       id: user.id,
@@ -49,7 +45,7 @@ export const loginUser = async (req: Request, res: Response) => {
 
     jwt.sign(usuario, JWT_SECRECT, { expiresIn: JWT_EXPIRES }, (err, token) => {
       if (err) throw err;
-      return res.cookie(app, token, {
+      return res.cookie(data.app, token, {
         sameSite: ENTORNO === 'dev' ? 'lax' : 'none',
         secure: ENTORNO === 'dev' ? false : true,
       })
@@ -57,9 +53,7 @@ export const loginUser = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.log(error);
-    if (error instanceof Error) {
-      return res.status(400).json({ message: error.message });
-    }
+    if (error instanceof Error) return res.status(400).json({ message: error.message });
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
