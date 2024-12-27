@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const envSchema = z.object({
-  PORT: z.string().min(4, 'El puerto es requerido').default('3000'),
+  PORT: z.string().min(2, 'El puerto es requerido').default('3000'),
   VERSION: z.string().min(1, 'La versión es requerida'),
   JWT_SECRECT: z.string().min(8, 'El JWT_SECRET es requerido'),
   JWT_EXPIRES: z.string().min(2, 'El tiempo de expiración del token es requerido'),
