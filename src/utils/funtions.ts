@@ -17,11 +17,11 @@ export const generateUsername = (document: string | number) => {
  * @param document type number or string
  * @returns password with the prefix CP and the last three digits of the document
  **/
-export const generatePassword = (document: string | number) => {
+export const generatePassword = async (document: string | number) => {
   if (typeof document === 'number') document = document.toString();
   const threeLastDocument = document.slice(-3);
   const pass = `${USERNAME_PREFIX}${threeLastDocument}`;
-  return bcrypt.hashSync(pass, SALT_ROUNDS);
+  return bcrypt.hash(pass, SALT_ROUNDS);
 };
 
 export const hashNewPassword = async (password: string): Promise<string> => {
