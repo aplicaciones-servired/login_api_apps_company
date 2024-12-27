@@ -1,14 +1,13 @@
 import { comparePasswords, generatePassword, generateUsername, hashNewPassword } from '../utils/funtions';
 import { ValidationErrorItem, UniqueConstraintError } from 'sequelize';
 import { UserType, UserLoginType } from '../Schemas/UserSchema';
+import { ErrorMessages } from 'src/utils/eums';
 import { User } from '../model/user.model';
 
 export const registerUserServices = async (user: UserType) => {
   const userFound = await User.findOne({ where: { document: user.document } });
 
-  if (userFound) {
-    throw new Error('El usuario ya se encuentra registrado con el documento ingresado');
-  }
+  if (userFound) throw new Error('El usuario ya se encuentra registrado con el documento ingresado');
 
   const username = generateUsername(user.document.toString());
   const password = await generatePassword(user.document.toString());
@@ -27,25 +26,19 @@ export const registerUserServices = async (user: UserType) => {
   }
 }
 
-export const loginUserServices = async (user: UserLoginType) => {
+export const loginUserServices = async (user: UserLoginType): Promise<User> => {
   const userFound = await User.findOne({ where: { username: user.username } });
 
-  if (!userFound) {
-    throw new Error('Usuario no encontrado o no existe');
-  }
+  if (!userFound) throw new Error(ErrorMessages.USER_NOT_FOUND);
 
-  const passwordMatch = comparePasswords(user.password, userFound.password);
+  const passwordMatch = await comparePasswords(user.password, userFound.password);
 
-  if (!passwordMatch) {
-    throw new Error('Contraseña incorrecta o no coincide');
-  }
+  if (!passwordMatch) throw new Error(ErrorMessages.PASSWORD_INCORRECT);
 
-  if (userFound.state === false) {
-    throw new Error('Usuario se encuentra inactivo');
-  }
+  if (userFound.state === false) throw new Error(ErrorMessages.USER_INACTIVE);
 
   return userFound;
-}
+};
 
 export const getUserByToken = async (token: string) => {
   const user = await User.findOne({ where: { username: token } });
