@@ -1,4 +1,4 @@
-import { DB_NAME, DB_PASS, DB_HOST, DB_PORT, DB_USER } from '../configs/envSchema';
+import { DB_NAME, DB_PASS, DB_HOST, DB_PORT, DB_USER, ENTORNO } from '../configs/envSchema';
 import { Sequelize } from 'sequelize';
 
 const POWERBI = new Sequelize(
@@ -10,6 +10,7 @@ const POWERBI = new Sequelize(
     port: parseInt(DB_PORT),
     dialect: 'mysql',
     timezone: '-05:00',
+    logging: ENTORNO === 'dev' ? console.log : false,
   });
 
 export { POWERBI };
