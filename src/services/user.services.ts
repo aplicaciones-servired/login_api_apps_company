@@ -1,21 +1,7 @@
+import { comparePasswords, generatePassword, generateUsername, hashNewPassword } from '../utils/funtions';
 import { ValidationErrorItem, UniqueConstraintError } from 'sequelize';
 import { UserType, UserLoginType } from '../Schemas/UserSchema';
-import { SALT } from '../configs/envSchema';
 import { User } from '../model/user.model';
-import bcrypt from 'bcryptjs';
-
-const USERNAME_PREFIX = 'CP';
-const SALT_ROUNDS = bcrypt.genSaltSync(parseInt(SALT));
-
-const generateUsername = (document: string): string => {
-  return `${USERNAME_PREFIX}${document}`;
-};
-
-const generatePassword = (document: string): string => {
-  const threeLastDocument = document.slice(-3);
-  const pass = `${USERNAME_PREFIX}${threeLastDocument}`;
-  return bcrypt.hashSync(pass, SALT_ROUNDS);
-};
 
 export const registerUserServices = async (user: UserType) => {
   const userFound = await User.findOne({ where: { document: user.document } });
@@ -25,7 +11,7 @@ export const registerUserServices = async (user: UserType) => {
   }
 
   const username = generateUsername(user.document.toString());
-  const password = generatePassword(user.document.toString());
+  const password = await generatePassword(user.document.toString());
   const state = true;
 
   await User.sync();
@@ -48,7 +34,7 @@ export const loginUserServices = async (user: UserLoginType) => {
     throw new Error('Usuario no encontrado o no existe');
   }
 
-  const passwordMatch = bcrypt.compareSync(user.password, userFound.password);
+  const passwordMatch = comparePasswords(user.password, userFound.password);
 
   if (!passwordMatch) {
     throw new Error('Contraseña incorrecta o no coincide');
@@ -106,7 +92,7 @@ export const resetPasswordService = async (token: string, password: string) => {
     if (now > user.dataValues.resetPasswordExpires) throw new Error('Token expirado, se debe solicitar uno nuevo');
   }
 
-  const hasPass = bcrypt.hashSync(password, SALT);
+  const hasPass = await hashNewPassword(password);
 
   const result = User.update({ password: hasPass, resetPasswordToken: null, resetPasswordExpires: null },
     { where: { resetPasswordToken: token } });
