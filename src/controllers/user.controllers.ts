@@ -8,15 +8,12 @@ import cryto from 'node:crypto'
 import jwt from 'jsonwebtoken'
 
 export const createUser = async (req: Request, res: Response) => {
+  const { success, data, error } = await validateUser(req.body)
+
+  if (!success) return res.status(400).json({ message: error.format() })
+
   try {
-    const { success, data, error } = await validateUser(req.body)
-
-    if (!success) {
-      return res.status(400).json({ message: error.format() })
-    }
-
     await registerUserServices(data)
-
     return res.status(201).json('Usuario creado correctamente')
   } catch (error) {
     if (error instanceof Error) {
