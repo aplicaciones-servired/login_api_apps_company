@@ -1,56 +1,35 @@
 import { findUserServices, loginUserServices, registerUserServices, findUserServicesById, forgotPasswordServices, asignTokenServices, resetPasswordService } from '../services/user.services'
+import { JWT_SECRECT, JWT_EXPIRES, ENTORNO } from '../configs/envSchema'
 import { validateUser, validateUserLogin } from '../Schemas/UserSchema'
-import { Request, Response } from 'express'
-import cryto from 'node:crypto'
-
-const JWT_EXPIRES = process.env.JWT_EXPIRES_IN as string
-const JWT_SECRET = process.env.JWT_SECRET as string
-const NODE_ENV = process.env.ENTORNO as string
-
-import jwt from 'jsonwebtoken'
-
 import { Company, Procces, Sub_Procces } from '../utils/Definiciones'
 import { verifyToken } from '../utils/verifyToken'
-import { isMainError } from '../utils/funtions'
-import { CustomError } from '../class/ClassErrorSql'
+import { Request, Response } from 'express'
+import cryto from 'node:crypto'
+import jwt from 'jsonwebtoken'
 
 export const createUser = async (req: Request, res: Response) => {
+  const { success, data, error } = await validateUser(req.body)
+
+  if (!success) return res.status(400).json({ message: error.format() })
+
   try {
-    const result = await validateUser(req.body)
-
-    if (result.error) {
-      const meesage = result.error.issues[0].message
-      return res.status(400).json({ error: meesage || 'Error en los datos enviados' })
-    }
-
-    const userCreated = await registerUserServices(result.data)
-
-    if (!userCreated) {
-      return res.status(400).json({ message: 'Error al crear el usuario' })
-    }
-
+    await registerUserServices(data)
     return res.status(201).json('Usuario creado correctamente')
-  } catch (error: unknown) {
-    console.log(error);
-    if (isMainError(error)) {
-      return res.status(400).json({ errorCode: error.parent.code, message: error.parent.sqlMessage })
-    } else if (error instanceof Error) {
-      return res.status(500).json({ message: 'Internal server error' })
-    } else {
-      return res.status(500).json({ message: 'Error desconocido contacte al administrado del sistema' })
+  } catch (error) {
+    if (error instanceof Error) {
+      return res.status(400).json({ message: error.message })
     }
+    return res.status(500).json({ message: 'Internal server error' })
   }
 }
 
 export const loginUser = async (req: Request, res: Response) => {
+  const { success, data, error } = await validateUserLogin(req.body);
+
+  if (!success) return res.status(400).json({ message: error.format() });
+
   try {
-    const result = await validateUserLogin(req.body);
-
-    if (result.error) return res.status(400).json(result.error.issues[0].message);
-
-    const user = await loginUserServices(result.data);
-
-    const app = result.data.app;
+    const user = await loginUserServices(data);
 
     const usuario = {
       id: user.id,
@@ -64,27 +43,23 @@ export const loginUser = async (req: Request, res: Response) => {
       sub_process: Sub_Procces(user.sub_process),
     }
 
-    jwt.sign(usuario, JWT_SECRET, { expiresIn: JWT_EXPIRES }, (err, token) => {
+    jwt.sign(usuario, JWT_SECRECT, { expiresIn: JWT_EXPIRES }, (err, token) => {
       if (err) throw err;
-      return res.cookie(app, token, {
-        sameSite: NODE_ENV === 'dev' ? 'lax' : 'none',
-        secure: NODE_ENV === 'dev' ? false : true,
+      return res.cookie(data.app, token, {
+        sameSite: ENTORNO === 'dev' ? 'lax' : 'none',
+        secure: ENTORNO === 'dev' ? false : true,
       })
         .status(200).json({ message: 'Login successful' });
     });
-  } catch (error: unknown) {
-    if (error instanceof CustomError) {
-      return res.status(400).json({ message: error.message, description: error.description });
-    }
-
-    if (error instanceof Error) {
-      return res.status(500).json({ message: 'Internal server error' });
-    }
+  } catch (error) {
+    console.log(error);
+    if (error instanceof Error) return res.status(400).json({ message: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 }
 
 export const UserByToken = async (req: Request, res: Response) => {
-  
+
   try {
     const app: string = req.query.app as string;
     const token = req.cookies[app];
@@ -94,7 +69,7 @@ export const UserByToken = async (req: Request, res: Response) => {
     }
 
     try {
-      const decoded = await verifyToken(token, JWT_SECRET);
+      const decoded = await verifyToken(token, JWT_SECRECT);
       return res.status(200).json(decoded);
     } catch (err) {
       if (err instanceof jwt.TokenExpiredError) {
@@ -184,7 +159,7 @@ export const findUserById = async (req: Request, res: Response) => {
 
     return res.status(200).json(user);
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error' });
+    return res.status(500).json({ message: 'Internal server error', error });
   }
 }
 

@@ -1,33 +1,28 @@
-import corsMiddleware from './corsConfig';
+import { POWERBI } from './connections/login_unificado';
+import { PORT, VERSION } from './configs/envSchema';
+import { userRouter } from './routes/user.routes';
+import corsMiddleware from './configs/corsConfig';
 
 import cookieParser from 'cookie-parser';
-import testDB, { PORT } from './configs';
 import express from 'express';
 import morgan from 'morgan';
 
-import { userRouter } from './routes/user.routes';
-
-const v1 = '/api/v1';
-
 const app = express();
 
-app.get('/', (req, res) => {
-  // Endpoint de prueba de la API
-  res.send('Hello World');
-})
-
-// TODO: middlewares de express
+// TODO: middlewares para el manejo de peticiones
 app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(express.json());
 app.use(corsMiddleware);
 
 // TODO: rutas de la API
-app.use(v1, userRouter);
+app.use(VERSION, userRouter);
 
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server iniciado en el puerto http://localhost:${PORT}`);
 });
 
-// TODO: test database connection
-testDB();
+// Test de conexión a la base de datos de PowerBI
+POWERBI.authenticate()
+  .then(() => console.log('Conexión a la base de datos establecida'))
+  .catch(error => console.error('No se pudo conectar a la base de datos:', error));
