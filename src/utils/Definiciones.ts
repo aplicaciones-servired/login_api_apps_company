@@ -56,7 +56,7 @@ export function Sub_Procces(sub_procces: number): string {
     2: 'cartera',
     3: 'aux contable',
     4: 'aux administrativo',
-    5: 'aux cartera',
+    5: 'Gerente',
     6: 'Sub proceso 7',
     7: 'Sub proceso 8',
     8: 'Sub proceso 9',
