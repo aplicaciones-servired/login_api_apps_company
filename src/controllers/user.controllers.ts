@@ -32,7 +32,7 @@ export const loginUser = async (req: Request, res: Response) => {
     const user = await loginUserServices(data);
 
     const usuario = {
-      id: user.id,
+      // id: user.id,
       names: user.names,
       lastnames: user.lastNames,
       document: user.document,
@@ -59,6 +59,7 @@ export const loginUser = async (req: Request, res: Response) => {
 }
 
 export const UserByToken = async (req: Request, res: Response) => {
+  console.log(req);
 
   try {
     const app: string = req.query.app as string;
@@ -185,6 +186,8 @@ export const forgotPassword = async (req: Request, res: Response) => {
     if (result[0] === 0) {
       return res.status(500).json({ message: 'Internal server error' });
     }
+
+    // TODO: Generamos correo y posiblemente la url para ingresar a la pagina de restablecer contraseña
 
     return res.status(200).json({ message: 'Solicitud Generada Correctamente' });
   } catch (error) {
