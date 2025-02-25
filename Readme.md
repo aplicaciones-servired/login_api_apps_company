@@ -15,3 +15,7 @@ aplicando un solo login para todos los sistemas. ademas de agregar buenas practi
 - Nodemailer
 - Cors
 - Dotenv
+
+# Verificar los procesos
+# verificar los sub-process o roles
+# implementar funcionalidades de reseteo de clave 
