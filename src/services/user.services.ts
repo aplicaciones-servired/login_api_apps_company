@@ -63,7 +63,7 @@ export const forgotPasswordServices = async (document: number, email: string) =>
   const user = await User.findOne({ where: { document, email } });
 
   if (!user) {
-    throw new Error('Usuario no encontrado documento o correo invalidos');
+    throw new Error('Usuario no encontrado documento o correo invalidos y/o no coinciden');
   }
   return user;
 }
