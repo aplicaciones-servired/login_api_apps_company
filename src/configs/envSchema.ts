@@ -12,7 +12,9 @@ const envSchema = z.object({
   DB_NAME: z.string().min(4, 'El nombre de la base de datos es requerido'),
   DB_PORT: z.string().min(4, 'El puerto de la base de datos es requerido'),
   ENTORNO: z.string().min(3, 'El entorno es requerido').default('dev'),
-  CORS_ORIGINS: z.string().min(2, 'Los origenes permitidos son requeridos')
+  CORS_ORIGINS: z.string().min(2, 'Los origenes permitidos son requeridos'),
+  EMAIL_USER_GMAIL: z.string().min(2, 'El email de gmail es requerido'),
+  EMAIL_PASS_GMAIL: z.string().min(2, 'La contraseña de gmail es requerida'),
 })
 
 const { success, data, error } = envSchema.safeParse(process.env);
@@ -34,5 +36,7 @@ export const {
   DB_PORT,
   ENTORNO,
   CORS_ORIGINS,
-  JWT_EXPIRES
+  JWT_EXPIRES,
+  EMAIL_USER_GMAIL,
+  EMAIL_PASS_GMAIL
 } = data;

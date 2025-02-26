@@ -6,6 +6,7 @@ import { verifyToken } from '../utils/verifyToken'
 import { Request, Response } from 'express'
 import cryto from 'node:crypto'
 import jwt from 'jsonwebtoken'
+import { SendEmailRestorePassword } from 'src/services/nodemailer'
 
 export const createUser = async (req: Request, res: Response) => {
   const { success, data, error } = await validateUser(req.body)
@@ -187,7 +188,9 @@ export const forgotPassword = async (req: Request, res: Response) => {
       return res.status(500).json({ message: 'Internal server error' });
     }
 
-    // TODO: Generamos correo y posiblemente la url para ingresar a la pagina de restablecer contraseña
+    const response = await SendEmailRestorePassword({ email: user.dataValues.email, token });
+
+    console.log(response);
 
     return res.status(200).json({ message: 'Solicitud Generada Correctamente' });
   } catch (error) {
@@ -202,7 +205,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
 export const resetPassword = async (req: Request, res: Response) => {
   const { token, password, confirmPassword } = req.body
 
-  if (!token || !password || !confirmPassword) return res.status(400).json({ message: 'token y contraseña son requeridos' })
+  if (!token || !password || !confirmPassword) return res.status(400).json({ message: 'token y contraseñas son requeridas' })
   if (password !== confirmPassword) return res.status(400).json({ message: 'Las contraseñas no coinciden' })
 
   try {
