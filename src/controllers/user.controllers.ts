@@ -2,11 +2,11 @@ import { findUserServices, loginUserServices, registerUserServices, findUserServ
 import { JWT_SECRECT, JWT_EXPIRES, ENTORNO } from '../configs/envSchema'
 import { validateUser, validateUserLogin } from '../Schemas/UserSchema'
 import { Company, Procces, Sub_Procces } from '../utils/Definiciones'
+import { SendEmailRestorePassword } from 'src/services/nodemailer'
 import { verifyToken } from '../utils/verifyToken'
 import { Request, Response } from 'express'
 import cryto from 'node:crypto'
 import jwt from 'jsonwebtoken'
-import { SendEmailRestorePassword } from 'src/services/nodemailer'
 
 export const createUser = async (req: Request, res: Response) => {
   const { success, data, error } = await validateUser(req.body)
@@ -215,6 +215,7 @@ export const resetPassword = async (req: Request, res: Response) => {
 
     return res.status(200).json({ message: 'Contraseña restablecida correctamente' })
   } catch (error) {
-    return res.status(500).json(error)
+    if(error instanceof Error) return res.status(400).json({ message: error.message })
+    return res.status(500).json('Internal server error')
   }
 }
