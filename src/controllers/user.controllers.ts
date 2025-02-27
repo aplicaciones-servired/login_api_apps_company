@@ -33,7 +33,7 @@ export const loginUser = async (req: Request, res: Response) => {
     const user = await loginUserServices(data);
 
     const usuario = {
-      // id: user.id,
+      id: user.id,
       names: user.names,
       lastnames: user.lastNames,
       document: user.document,
