@@ -60,8 +60,6 @@ export const loginUser = async (req: Request, res: Response) => {
 }
 
 export const UserByToken = async (req: Request, res: Response) => {
-  console.log(req);
-
   try {
     const app: string = req.query.app as string;
     const token = req.cookies[app];
@@ -189,7 +187,6 @@ export const forgotPassword = async (req: Request, res: Response) => {
     }
 
     const response = await SendEmailRestorePassword({ email: user.dataValues.email, token });
-
     console.log(response);
 
     return res.status(200).json({ message: 'Solicitud Generada Correctamente' });
