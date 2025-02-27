@@ -2,7 +2,7 @@ import { findUserServices, loginUserServices, registerUserServices, findUserServ
 import { JWT_SECRECT, JWT_EXPIRES, ENTORNO } from '../configs/envSchema'
 import { validateUser, validateUserLogin } from '../Schemas/UserSchema'
 import { Company, Procces, Sub_Procces } from '../utils/Definiciones'
-import { SendEmailRestorePassword } from 'src/services/nodemailer'
+import { SendEmailRestorePassword } from '../services/nodemailer'
 import { verifyToken } from '../utils/verifyToken'
 import { Request, Response } from 'express'
 import cryto from 'node:crypto'
