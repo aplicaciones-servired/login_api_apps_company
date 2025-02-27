@@ -2,6 +2,7 @@ import { findUserServices, loginUserServices, registerUserServices, findUserServ
 import { JWT_SECRECT, JWT_EXPIRES, ENTORNO } from '../configs/envSchema'
 import { validateUser, validateUserLogin } from '../Schemas/UserSchema'
 import { Company, Procces, Sub_Procces } from '../utils/Definiciones'
+import { SendEmailRestorePassword } from 'src/services/nodemailer'
 import { verifyToken } from '../utils/verifyToken'
 import { Request, Response } from 'express'
 import cryto from 'node:crypto'
@@ -59,6 +60,7 @@ export const loginUser = async (req: Request, res: Response) => {
 }
 
 export const UserByToken = async (req: Request, res: Response) => {
+  console.log(req);
 
   try {
     const app: string = req.query.app as string;
@@ -186,6 +188,10 @@ export const forgotPassword = async (req: Request, res: Response) => {
       return res.status(500).json({ message: 'Internal server error' });
     }
 
+    const response = await SendEmailRestorePassword({ email: user.dataValues.email, token });
+
+    console.log(response);
+
     return res.status(200).json({ message: 'Solicitud Generada Correctamente' });
   } catch (error) {
     console.log(error);
@@ -199,7 +205,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
 export const resetPassword = async (req: Request, res: Response) => {
   const { token, password, confirmPassword } = req.body
 
-  if (!token || !password || !confirmPassword) return res.status(400).json({ message: 'token y contraseña son requeridos' })
+  if (!token || !password || !confirmPassword) return res.status(400).json({ message: 'token y contraseñas son requeridas' })
   if (password !== confirmPassword) return res.status(400).json({ message: 'Las contraseñas no coinciden' })
 
   try {
@@ -209,6 +215,7 @@ export const resetPassword = async (req: Request, res: Response) => {
 
     return res.status(200).json({ message: 'Contraseña restablecida correctamente' })
   } catch (error) {
-    return res.status(500).json(error)
+    if(error instanceof Error) return res.status(400).json({ message: error.message })
+    return res.status(500).json('Internal server error')
   }
 }

@@ -27,7 +27,7 @@ export function Procces(procces: number): string {
   const process: { [key in number]: string } = {
     0: 'Técnologia',
     1: 'Financiero',
-    2: 'Contabilidad',
+    2: 'Desarrollo Informático',
     3: 'Comercial',
     4: 'Administración',
     5: 'Gestión Humana',
@@ -36,8 +36,8 @@ export function Procces(procces: number): string {
     8: 'Auditoria',
     9: 'Cumplimiento',
     10: 'Operaciones',
-    11: 'Legal',
-    12: 'Mercadeo'
+    11: '',
+    12: ''
   };
   return process[procces];
 }
