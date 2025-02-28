@@ -1,7 +1,7 @@
 import { findUserServices, loginUserServices, registerUserServices, findUserServicesById, forgotPasswordServices, asignTokenServices, resetPasswordService } from '../services/user.services'
+import { getCompanyName, getProccesName, getSubProccesName } from '../utils/Definiciones'
 import { JWT_SECRECT, JWT_EXPIRES, ENTORNO } from '../configs/envSchema'
 import { validateUser, validateUserLogin } from '../Schemas/UserSchema'
-import { Company, Procces, Sub_Procces } from '../utils/Definiciones'
 import { SendEmailRestorePassword } from '../services/nodemailer'
 import { verifyToken } from '../utils/verifyToken'
 import { Request, Response } from 'express'
@@ -39,9 +39,9 @@ export const loginUser = async (req: Request, res: Response) => {
       document: user.document,
       username: user.username,
       email: user.email,
-      company: Company(user.company),
-      process: Procces(user.process),
-      sub_process: Sub_Procces(user.sub_process),
+      company: getCompanyName(user.company),
+      process: getProccesName(user.process),
+      sub_process: getSubProccesName(user.sub_process),
     }
 
     jwt.sign(usuario, JWT_SECRECT, { expiresIn: JWT_EXPIRES }, (err, token) => {
@@ -60,8 +60,6 @@ export const loginUser = async (req: Request, res: Response) => {
 }
 
 export const UserByToken = async (req: Request, res: Response) => {
-  console.log(req);
-
   try {
     const app: string = req.query.app as string;
     const token = req.cookies[app];
@@ -113,9 +111,9 @@ export const findAllUsers = async (req: Request, res: Response) => {
         names: user.names,
         lastnames: user.lastNames,
         email: user.email,
-        company: Company(user.company),
-        process: Procces(user.process),
-        sub_process: Sub_Procces(user.sub_process),
+        company: getCompanyName(user.company),
+        process: getProccesName(user.process),
+        sub_process: getSubProccesName(user.sub_process),
         state: user.state,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt
@@ -150,9 +148,9 @@ export const findUserById = async (req: Request, res: Response) => {
       lastnames: result.lastNames,
       username: result.username,
       email: result.email,
-      company: Company(result.company),
-      process: Procces(result.process),
-      sub_process: Sub_Procces(result.sub_process),
+      company: getCompanyName(result.company),
+      process: getProccesName(result.process),
+      sub_process: getSubProccesName(result.sub_process),
       state: result.state,
       createdAt: result.createdAt,
       updatedAt: result.updatedAt
@@ -215,7 +213,7 @@ export const resetPassword = async (req: Request, res: Response) => {
 
     return res.status(200).json({ message: 'Contraseña restablecida correctamente' })
   } catch (error) {
-    if(error instanceof Error) return res.status(400).json({ message: error.message })
+    if (error instanceof Error) return res.status(400).json({ message: error.message })
     return res.status(500).json('Internal server error')
   }
 }
