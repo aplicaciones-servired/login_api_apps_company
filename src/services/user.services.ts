@@ -5,7 +5,7 @@ import { connectionPool } from '../connections/Mysql';
 import { ErrorMessages } from '../utils/eums';
 import { User } from '../model/user.model';
 import { RowDataPacket } from 'mysql2';
-import { colorize, consoleColors } from 'src/utils/colorsConsole';
+import { colorize, consoleColors } from '../utils/colorsConsole';
 
 interface UserRow extends RowDataPacket {
   id: string;
