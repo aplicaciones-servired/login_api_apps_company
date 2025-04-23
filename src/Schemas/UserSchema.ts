@@ -45,10 +45,6 @@ const UserLogin = z.object({
   password: z.string({
     invalid_type_error: 'La contraseña debe ser una cadena de texto',
     required_error: 'La contraseña es requerida',
-  }),
-  app: z.string({
-    invalid_type_error: 'La aplicación debe ser una cadena de texto',
-    required_error: 'La aplicación es requerida',
   })
 })
 

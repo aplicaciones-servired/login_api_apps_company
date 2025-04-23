@@ -5,6 +5,8 @@ import { ErrorMessages } from 'src/utils/eums';
 import { User } from '../model/user.model';
 
 export const registerUserServices = async (user: UserType) => {
+  await User.sync();
+  
   const userFound = await User.findOne({ where: { document: user.document } });
 
   if (userFound) throw new Error('El usuario ya se encuentra registrado con el documento ingresado');
@@ -12,8 +14,6 @@ export const registerUserServices = async (user: UserType) => {
   const username = generateUsername(user.document.toString());
   const password = await generatePassword(user.document.toString());
   const state = true;
-
-  await User.sync();
 
   try {
     const userCreated = await User.create({ ...user, username, password, state });

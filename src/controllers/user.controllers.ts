@@ -11,7 +11,7 @@ import jwt from 'jsonwebtoken'
 export const createUser = async (req: Request, res: Response) => {
   const { success, data, error } = await validateUser(req.body)
 
-  if (!success) return res.status(400).json({ message: error.format() })
+  if (!success) return res.status(400).json({ message: error.issues[0].message })
 
   try {
     await registerUserServices(data)
@@ -46,9 +46,12 @@ export const loginUser = async (req: Request, res: Response) => {
 
     jwt.sign(usuario, JWT_SECRECT, { expiresIn: JWT_EXPIRES }, (err, token) => {
       if (err) throw err;
-      return res.cookie(data.app, token, {
-        sameSite: ENTORNO === 'dev' ? 'lax' : 'none',
+      return res.cookie(
+        'authTokenGane',
+        token, {
+        httpOnly: ENTORNO === 'dev' ? false : true,
         secure: ENTORNO === 'dev' ? false : true,
+        sameSite: ENTORNO === 'dev' ? 'lax' : 'none'
       })
         .status(200).json({ message: 'Login successful' });
     });
@@ -61,12 +64,14 @@ export const loginUser = async (req: Request, res: Response) => {
 
 export const UserByToken = async (req: Request, res: Response) => {
   try {
-    const app: string = req.query.app as string;
-    const token = req.cookies[app];
-
-    if (!token) {
-      return res.status(401).json({ message: 'Unauthorized' });
+    const cookie = req.headers.cookie 
+    
+    if (!cookie) {
+      res.status(401).json({ message: 'Unauthorized: Missing or invalid token' });
+      return;
     }
+
+    const token = cookie.split('=')[1];
 
     try {
       const decoded = await verifyToken(token, JWT_SECRECT);
@@ -84,15 +89,16 @@ export const UserByToken = async (req: Request, res: Response) => {
 }
 
 export const logoutUser = async (req: Request, res: Response) => {
-  const token = req.headers.cookie as string;
+  const cookie = req.headers.cookie 
+  const token = cookie?.split('=')[0]
 
   if (!token) {
-    return res.status(400).json({ message: 'Token not found' });
+    res.status(400).json({ message: 'Token not found' });
+    return 
   }
 
   try {
-    const clearToken = token.split('=')[0]
-    return res.clearCookie(clearToken).status(200).json({ message: 'Logout successful' })
+    return res.clearCookie(token).status(200).json({ message: 'Logout successful' })
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: 'Internal server error' })

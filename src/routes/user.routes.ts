@@ -1,19 +1,20 @@
+import { authenticateToken } from 'src/middlewares/authToken';
 import { createUser, loginUser, logoutUser, UserByToken, findAllUsers, findUserById, forgotPassword, resetPassword } from '../controllers/user.controllers'
 import { Router } from 'express';
 
 export const userRouter = Router();
 
-userRouter.post('/register', createUser)
+userRouter.post('/register', authenticateToken, createUser)
 
 userRouter.post('/login', loginUser)
 
 userRouter.get('/profile', UserByToken)
 
-userRouter.post('/logout', logoutUser)
+userRouter.get('/logout', logoutUser)
 
-userRouter.get('/users', findAllUsers)
+userRouter.get('/users', authenticateToken, findAllUsers)
 
-userRouter.get('/user/:id', findUserById)
+userRouter.get('/user/:id', authenticateToken, findUserById)
 
 userRouter.post('/auth/forgot-password', forgotPassword)
 

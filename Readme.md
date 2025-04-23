@@ -1,14 +1,13 @@
 # API LOGIN UNIFICADO 
 
-## Descriptción
+## Descripción
 
-Api desarrollada con la finalidad de unificar los logins de los diferentes sistemas de la empresa.
-aplicando un solo login para todos los sistemas. ademas de agregar buenas practicas de seguridad.
+API diseñada para centralizar los logins de los diferentes sistemas de la empresa, permitiendo un acceso unificado y aplicando buenas prácticas de seguridad.
 
-## Librerias
-- Nodejs
+## Librerías Utilizadas
+- Node.js
 - Express
-- Mysql
+- MySQL
 - JWT
 - Bcrypt
 - Sequelize
@@ -16,6 +15,6 @@ aplicando un solo login para todos los sistemas. ademas de agregar buenas practi
 - Cors
 - Dotenv
 
-# Verificar los procesos
-# verificar los sub-process o roles
-# implementar funcionalidades de reseteo de clave 
+## Funcionalidades a Implementar
+- Verificación de procesos y subprocesos o roles.
+- Implementación de funcionalidad para el reseteo de contraseñas.
