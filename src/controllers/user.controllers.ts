@@ -1,12 +1,12 @@
-import { findUserServices, loginUserServices, registerUserServices, findUserServicesById, forgotPasswordServices, asignTokenServices, resetPasswordService } from '../services/user.services'
-import { getCompanyName, getProccesName, getSubProccesName } from '../utils/Definiciones'
-import { JWT_SECRECT, JWT_EXPIRES, ENTORNO } from '../configs/envSchema'
-import { validateUser, validateUserLogin } from '../Schemas/UserSchema'
-import { SendEmailRestorePassword } from '../services/nodemailer'
-import { verifyToken } from '../utils/verifyToken'
-import { Request, Response } from 'express'
-import cryto from 'node:crypto'
-import jwt from 'jsonwebtoken'
+import { findUserServices, loginUserServices, registerUserServices, findUserServicesById, forgotPasswordServices, asignTokenServices, resetPasswordService } from '../services/user.services';
+import { JWT_SECRECT, JWT_EXPIRES, ENTORNO } from '../configs/envSchema';
+import { validateUser, validateUserLogin } from '../Schemas/UserSchema';
+import { Company, Process, State, SubProcess } from 'src/enum/enums';
+import { SendEmailRestorePassword } from '../services/nodemailer';
+import { verifyToken } from '../utils/verifyToken';
+import { Request, Response } from 'express';
+import cryto from 'node:crypto';
+import jwt from 'jsonwebtoken';
 
 export const createUser = async (req: Request, res: Response) => {
   const { success, data, error } = await validateUser(req.body)
@@ -39,9 +39,10 @@ export const loginUser = async (req: Request, res: Response) => {
       document: user.document,
       username: user.username,
       email: user.email,
-      company: getCompanyName(user.company),
-      process: getProccesName(user.process),
-      sub_process: getSubProccesName(user.sub_process),
+      company: Company[user.company],
+      process: Process[user.process],
+      sub_process: SubProcess[user.sub_process],
+      state: State[user.state === true ? 0 : 1]
     }
 
     jwt.sign(usuario, JWT_SECRECT, { expiresIn: JWT_EXPIRES }, (err, token) => {
@@ -117,10 +118,10 @@ export const findAllUsers = async (req: Request, res: Response) => {
         names: user.names,
         lastnames: user.lastNames,
         email: user.email,
-        company: getCompanyName(user.company),
-        process: getProccesName(user.process),
-        sub_process: getSubProccesName(user.sub_process),
-        state: user.state,
+        company: Company[user.company],
+        process: Process[user.process],
+        sub_process: SubProcess[user.sub_process],
+        state: State[user.state === true ? 0 : 1],
         createdAt: user.createdAt,
         updatedAt: user.updatedAt
       }
@@ -154,10 +155,10 @@ export const findUserById = async (req: Request, res: Response) => {
       lastnames: result.lastNames,
       username: result.username,
       email: result.email,
-      company: getCompanyName(result.company),
-      process: getProccesName(result.process),
-      sub_process: getSubProccesName(result.sub_process),
-      state: result.state,
+      company: Company[result.company],
+      process: Process[result.process],
+      sub_process: SubProcess[result.sub_process],
+      state: State[result.state === true ? 0 : 1],
       createdAt: result.createdAt,
       updatedAt: result.updatedAt
     }
