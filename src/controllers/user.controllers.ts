@@ -1,7 +1,7 @@
 import { findUserServices, loginUserServices, registerUserServices, findUserServicesById, forgotPasswordServices, asignTokenServices, resetPasswordService } from '../services/user.services';
 import { JWT_SECRECT, ENTORNO } from '../configs/envSchema';
 import { validateUser, validateUserLogin } from '../Schemas/UserSchema';
-import { Company, Process, State, SubProcess } from 'src/enum/enums';
+import { Company, Process, State, SubProcess } from '../enum/enums';
 import { SendEmailRestorePassword } from '../services/nodemailer';
 import { verifyToken } from '../utils/verifyToken';
 import { Request, Response } from 'express';
