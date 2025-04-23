@@ -1,4 +1,4 @@
-import { authenticateToken } from 'src/middlewares/authToken';
+import { authenticateToken } from '../middlewares/authToken';
 import { createUser, loginUser, logoutUser, UserByToken, findAllUsers, findUserById, forgotPassword, resetPassword } from '../controllers/user.controllers'
 import { Router } from 'express';
 
