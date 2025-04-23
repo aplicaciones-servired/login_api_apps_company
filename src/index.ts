@@ -6,7 +6,7 @@ import corsMiddleware from './configs/corsConfig';
 
 import cookieParser from 'cookie-parser';
 import express from 'express';
-import morgan from 'morgan';
+import { loggerMiddleware } from './middlewares/logger';
 
 const app = express();
 
@@ -15,15 +15,15 @@ app
   .disable('x-powered-by')
   .use(express.urlencoded({ extended: true }))
   .use(express.json())
-  .use(morgan('dev'))
   .use(corsMiddleware)
+  .use(loggerMiddleware)
   .use(cookieParser());
 
 // TODO: rutas de la API
 app.use(VERSION, userRouter);
 
 app.listen(PORT, () => {
-  console.log(`Server iniciado en el puerto http://localhost:${PORT}`);
+  console.log(colorize(`Server iniciado en: http://localhost:${PORT}`, consoleColors.fgCyan));
 });
 
 // Test de conexión a la base de datos de PowerBI
