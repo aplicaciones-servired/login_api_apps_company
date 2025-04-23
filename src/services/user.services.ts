@@ -1,8 +1,8 @@
 import { comparePasswords, generatePassword, generateUsername, hashNewPassword } from '../utils/funtions';
 import { ValidationErrorItem, UniqueConstraintError } from 'sequelize';
 import { UserType, UserLoginType } from '../Schemas/UserSchema';
-import { connectionPool } from 'src/connections/Mysql';
-import { ErrorMessages } from 'src/utils/eums';
+import { connectionPool } from '../connections/Mysql';
+import { ErrorMessages } from '../utils/eums';
 import { User } from '../model/user.model';
 import { RowDataPacket } from 'mysql2';
 import { colorize, consoleColors } from 'src/utils/colorsConsole';
