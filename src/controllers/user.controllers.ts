@@ -1,5 +1,5 @@
 import { findUserServices, loginUserServices, registerUserServices, findUserServicesById, forgotPasswordServices, asignTokenServices, resetPasswordService } from '../services/user.services';
-import { JWT_SECRECT, ENTORNO } from '../configs/envSchema';
+import { JWT_SECRECT, ENTORNO, JWT_NAME_TOKEN, EXPIRES_IN } from '../configs/envSchema';
 import { validateUser, validateUserLogin } from '../Schemas/UserSchema';
 import { Company, Process, State, SubProcess } from '../enum/enums';
 import { SendEmailRestorePassword } from '../services/nodemailer';
@@ -43,7 +43,7 @@ export const loginUser = async (req: Request, res: Response) => {
     const usuario = {
       id: user.id,
       names: user.names,
-      lastnames: user.lastnames,
+      lastnames: user.lastNames,
       document: user.document,
       username: user.username,
       email: user.email,
@@ -53,10 +53,10 @@ export const loginUser = async (req: Request, res: Response) => {
       state: State[user.state === true ? 0 : 1]
     }
 
-    jwt.sign(usuario, JWT_SECRECT, { expiresIn: '2h' }, (err, token) => {
+    jwt.sign(usuario, JWT_SECRECT, { expiresIn: '2h'  }, (err, token) => {
       if (err) throw err;
       res.cookie(
-        'authTokenGane',
+        JWT_NAME_TOKEN,
         token, {
         httpOnly: ENTORNO === 'dev' ? false : true,
         secure: ENTORNO === 'dev' ? false : true,
@@ -68,10 +68,8 @@ export const loginUser = async (req: Request, res: Response) => {
     console.log(error);
     if (error instanceof Error) {
       res.status(400).json({ message: error.message })
-      return
     } 
     res.status(500).json({ message: 'Internal server error' });
-    return 
   }
 }
 

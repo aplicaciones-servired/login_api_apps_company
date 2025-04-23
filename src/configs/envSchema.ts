@@ -14,6 +14,8 @@ const envSchema = z.object({
   CORS_ORIGINS: z.string().min(2, 'Los origenes permitidos son requeridos'),
   EMAIL_USER_GMAIL: z.string().min(2, 'El email de gmail es requerido'),
   EMAIL_PASS_GMAIL: z.string().min(2, 'La contraseña de gmail es requerida'),
+  JWT_NAME_TOKEN: z.string().min(2, 'El nombre del token es requerido'),
+  EXPIRES_IN: z.string().min(2, 'El tiempo de expiración es requerido').default('2h'),
 })
 
 const { success, data, error } = envSchema.safeParse(process.env);
@@ -36,5 +38,7 @@ export const {
   ENTORNO,
   CORS_ORIGINS,
   EMAIL_USER_GMAIL,
-  EMAIL_PASS_GMAIL
+  EMAIL_PASS_GMAIL,
+  JWT_NAME_TOKEN,
+  EXPIRES_IN
 } = data;
