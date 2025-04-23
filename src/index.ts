@@ -1,3 +1,4 @@
+import { colorize, consoleColors } from './utils/colorsConsole';
 import { POWERBI } from './connections/login_unificado';
 import { PORT, VERSION } from './configs/envSchema';
 import { userRouter } from './routes/user.routes';
@@ -27,5 +28,11 @@ app.listen(PORT, () => {
 
 // Test de conexión a la base de datos de PowerBI
 POWERBI.authenticate()
-  .then(() => console.log('Conexión a la base de datos establecida'))
-  .catch(error => console.error('No se pudo conectar a la base de datos:', error));
+  .then(() => console.log(colorize('Conexión a la base de datos exitosa', consoleColors.fgGreen)))
+  .catch(error => {
+    console.error(colorize('Error de conexión a la base de datos', consoleColors.fgRed), error);
+    process.exit(1);
+  })
+  .finally(() => {
+    console.log(colorize('Test de conexión con la bd finalizado ...', consoleColors.fgYellow));
+  })
