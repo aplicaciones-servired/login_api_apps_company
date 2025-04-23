@@ -1,25 +1,8 @@
 import { comparePasswords, generatePassword, generateUsername, hashNewPassword } from '../utils/funtions';
 import { ValidationErrorItem, UniqueConstraintError } from 'sequelize';
 import { UserType, UserLoginType } from '../Schemas/UserSchema';
-import { connectionPool } from 'src/connections/Mysql';
-import { ErrorMessages } from 'src/utils/eums';
+import { ErrorMessages } from '../utils/eums';
 import { User } from '../model/user.model';
-import { RowDataPacket } from 'mysql2';
-import { colorize, consoleColors } from 'src/utils/colorsConsole';
-
-interface UserRow extends RowDataPacket {
-  id: string;
-  names: string;
-  lastnames: string;
-  password: string;
-  document: number;
-  username: string;
-  email: string;
-  company: number;
-  process: number;
-  sub_process: number;
-  state: boolean;
-}
 
 export const registerUserServices = async (user: UserType) => {
   await User.sync();
@@ -44,41 +27,17 @@ export const registerUserServices = async (user: UserType) => {
 }
 
 export const loginUserServices = async (user: UserLoginType) => {
-  let connection = await connectionPool()
-
-  try {
-    const { username, password } = user
-
-    if (!connection) {
-      throw new Error('Error al conectar a la base de datos')
-    }
-
-    const [userFound] = await connection.execute<UserRow[]>('SELECT id, names, lastnames, password, document, username, email, company, sub_process, state FROM login_users WHERE username = ?', [username]);
-
-    console.log(userFound);
-    
-
-    /*
     const userFound = await User.findOne({ where: { username: user.username } });
-    */
+
     if (!userFound) throw new Error(ErrorMessages.USER_NOT_FOUND);
 
-    const passwordMatch = await comparePasswords(password, userFound[0].password);
+    const passwordMatch = await comparePasswords(user.password, userFound.password);
 
     if (!passwordMatch) throw new Error(ErrorMessages.PASSWORD_INCORRECT);
 
-    if (userFound[0].state === false) throw new Error(ErrorMessages.USER_INACTIVE);
+    if (userFound.state === false) throw new Error(ErrorMessages.USER_INACTIVE);
 
-    return userFound[0];
-  } catch (error) {
-    if (error instanceof Error) {
-      console.log(colorize(consoleColors.fgRed, error.message));
-      throw new Error(error.message);
-    } else {
-      console.log(colorize(consoleColors.fgRed, 'Error inesperado al iniciar sesión'));
-      throw new Error('Error inesperado al iniciar sesión');
-    }
-  } 
+    return userFound;
 };
 
 export const getUserByToken = async (token: string) => {
