@@ -1,4 +1,4 @@
-import { colorize, consoleColors } from "src/utils/colorsConsole";
+import { colorize, consoleColors } from "../utils/colorsConsole";
 import { NextFunction, Request, Response } from "express";
 
 function statusColorize(statusCode: number): string {
