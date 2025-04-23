@@ -10,10 +10,13 @@ import morgan from 'morgan';
 const app = express();
 
 // TODO: middlewares para el manejo de peticiones
-app.use(morgan('dev'));
-app.use(cookieParser());
-app.use(express.json());
-app.use(corsMiddleware);
+app
+  .disable('x-powered-by')
+  .use(express.urlencoded({ extended: true }))
+  .use(express.json())
+  .use(morgan('dev'))
+  .use(corsMiddleware)
+  .use(cookieParser());
 
 // TODO: rutas de la API
 app.use(VERSION, userRouter);
