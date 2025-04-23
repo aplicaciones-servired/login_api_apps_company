@@ -3,13 +3,13 @@ import { JWT_SECRECT } from '../configs/envSchema';
 import jwt from 'jsonwebtoken';
 
 export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers.authorization;
+  const cookie = req.headers.cookie 
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ message: 'Unauthorized: Missing or invalid token' });
+  if (!cookie) {
+    res.status(401).json({ message: 'Unauthorized: Missing or invalid token' });
+    return;
   }
-
-  const token = authHeader.split(' ')[1];
+  const token = cookie.split('=')[1];
 
   try {
     jwt.verify(token, JWT_SECRECT);

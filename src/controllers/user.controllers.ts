@@ -49,9 +49,9 @@ export const loginUser = async (req: Request, res: Response) => {
       return res.cookie(
         'authTokenGane',
         token, {
-        httpOnly: true,
+        httpOnly: ENTORNO === 'dev' ? false : true,
         secure: ENTORNO === 'dev' ? false : true,
-        sameSite: ENTORNO === 'dev' ? 'lax' : 'strict'
+        sameSite: ENTORNO === 'dev' ? 'lax' : 'none'
       })
         .status(200).json({ message: 'Login successful' });
     });
@@ -64,13 +64,14 @@ export const loginUser = async (req: Request, res: Response) => {
 
 export const UserByToken = async (req: Request, res: Response) => {
   try {
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ message: 'Unauthorized: Missing or invalid token' });
+    const cookie = req.headers.cookie 
+    
+    if (!cookie) {
+      res.status(401).json({ message: 'Unauthorized: Missing or invalid token' });
+      return;
     }
 
-    const token = authHeader.split(' ')[1]; // Extraer el token después de "Bearer"
+    const token = cookie.split('=')[1];
 
     try {
       const decoded = await verifyToken(token, JWT_SECRECT);
@@ -88,15 +89,16 @@ export const UserByToken = async (req: Request, res: Response) => {
 }
 
 export const logoutUser = async (req: Request, res: Response) => {
-  const token = req.headers.cookie as string;
+  const cookie = req.headers.cookie 
+  const token = cookie?.split('=')[0]
 
   if (!token) {
-    return res.status(400).json({ message: 'Token not found' });
+    res.status(400).json({ message: 'Token not found' });
+    return 
   }
 
   try {
-    const clearToken = token.split('=')[0]
-    return res.clearCookie(clearToken).status(200).json({ message: 'Logout successful' })
+    return res.clearCookie(token).status(200).json({ message: 'Logout successful' })
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: 'Internal server error' })
