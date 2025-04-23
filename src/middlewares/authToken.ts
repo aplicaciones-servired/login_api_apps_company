@@ -16,8 +16,10 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
     next();
   } catch (err) {
     if (err instanceof jwt.TokenExpiredError) {
-      return res.status(401).json({ message: 'Token expired' });
+      res.status(401).json({ message: 'Token expired' });
+      return 
     }
-    return res.status(401).json({ message: 'Unauthorized: Invalid token' });
+    res.status(401).json({ message: 'Unauthorized: Invalid token' });
+    return 
   }
 };
