@@ -11,7 +11,7 @@ import jwt from 'jsonwebtoken'
 export const createUser = async (req: Request, res: Response) => {
   const { success, data, error } = await validateUser(req.body)
 
-  if (!success) return res.status(400).json({ message: error.format() })
+  if (!success) return res.status(400).json({ message: error.issues[0].message })
 
   try {
     await registerUserServices(data)
@@ -46,9 +46,12 @@ export const loginUser = async (req: Request, res: Response) => {
 
     jwt.sign(usuario, JWT_SECRECT, { expiresIn: JWT_EXPIRES }, (err, token) => {
       if (err) throw err;
-      return res.cookie(data.app, token, {
-        sameSite: ENTORNO === 'dev' ? 'lax' : 'none',
+      return res.cookie(
+        'authTokenGane',
+        token, {
+        httpOnly: true,
         secure: ENTORNO === 'dev' ? false : true,
+        sameSite: ENTORNO === 'dev' ? 'lax' : 'strict'
       })
         .status(200).json({ message: 'Login successful' });
     });
@@ -61,12 +64,13 @@ export const loginUser = async (req: Request, res: Response) => {
 
 export const UserByToken = async (req: Request, res: Response) => {
   try {
-    const app: string = req.query.app as string;
-    const token = req.cookies[app];
+    const authHeader = req.headers.authorization;
 
-    if (!token) {
-      return res.status(401).json({ message: 'Unauthorized' });
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ message: 'Unauthorized: Missing or invalid token' });
     }
+
+    const token = authHeader.split(' ')[1]; // Extraer el token después de "Bearer"
 
     try {
       const decoded = await verifyToken(token, JWT_SECRECT);
