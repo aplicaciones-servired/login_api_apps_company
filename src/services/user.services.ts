@@ -3,6 +3,7 @@ import { ValidationErrorItem, UniqueConstraintError } from 'sequelize';
 import { UserType, UserLoginType } from '../Schemas/UserSchema';
 import { ErrorMessages } from '../utils/eums';
 import { User } from '../model/user.model';
+import { compare, compareSync } from 'bcryptjs';
 
 export const registerUserServices = async (user: UserType) => {
   await User.sync();
@@ -27,17 +28,20 @@ export const registerUserServices = async (user: UserType) => {
 }
 
 export const loginUserServices = async (user: UserLoginType) => {
-    const userFound = await User.findOne({ where: { username: user.username } });
+  const userFound = await User.findOne({ where: { username: user.username } });
 
-    if (!userFound) throw new Error(ErrorMessages.USER_NOT_FOUND);
+  if (!userFound)
+    throw new Error(ErrorMessages.USER_NOT_FOUND);
 
-    const passwordMatch = await comparePasswords(user.password, userFound.password);
+  const passwordMatch = compareSync(user.password, userFound.password);
 
-    if (!passwordMatch) throw new Error(ErrorMessages.PASSWORD_INCORRECT);
+  if (!passwordMatch)
+    throw new Error(ErrorMessages.PASSWORD_INCORRECT);
 
-    if (userFound.state === false) throw new Error(ErrorMessages.USER_INACTIVE);
+  if (userFound.state === false)
+    throw new Error(ErrorMessages.USER_INACTIVE);
 
-    return userFound;
+  return userFound;
 };
 
 export const getUserByToken = async (token: string) => {
