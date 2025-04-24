@@ -1,5 +1,5 @@
 import { findUserServices, loginUserServices, registerUserServices, findUserServicesById, forgotPasswordServices, asignTokenServices, resetPasswordService } from '../services/user.services';
-import { JWT_SECRECT, ENTORNO, JWT_NAME_TOKEN, EXPIRES_IN } from '../configs/envSchema';
+import { JWT_SECRECT, ENTORNO, JWT_NAME_TOKEN } from '../configs/envSchema';
 import { validateUser, validateUserLogin } from '../Schemas/UserSchema';
 import { Company, Process, State, SubProcess } from '../enum/enums';
 import { SendEmailRestorePassword } from '../services/nodemailer';
@@ -18,14 +18,14 @@ export const createUser = async (req: Request, res: Response) => {
   try {
     await registerUserServices(data)
     res.status(201).json('Usuario creado correctamente')
-    return 
+    return
   } catch (error) {
     if (error instanceof Error) {
       res.status(400).json({ message: error.message })
-      return 
+      return
     }
     res.status(500).json({ message: 'Internal server error' })
-    return 
+    return
   }
 }
 
@@ -35,7 +35,7 @@ export const loginUser = async (req: Request, res: Response) => {
   if (!success) {
     res.status(400).json({ message: error.format() })
     return
-  } 
+  }
 
   try {
     const user = await loginUserServices(data);
@@ -53,30 +53,40 @@ export const loginUser = async (req: Request, res: Response) => {
       state: State[user.state === true ? 0 : 1]
     }
 
-    jwt.sign(usuario, JWT_SECRECT, { expiresIn: '2h'  }, (err, token) => {
-      if (err) throw err;
-      res.cookie(
-        JWT_NAME_TOKEN,
-        token, {
-        httpOnly: ENTORNO === 'dev' ? false : true,
-        secure: ENTORNO === 'dev' ? false : true,
-        sameSite: ENTORNO === 'dev' ? 'lax' : 'none'
-      })
-        .status(200).json({ message: 'Login successful' });
+    jwt.sign(usuario, JWT_SECRECT, { expiresIn: '2h' }, (err, token) => {
+      if (err) {
+        console.log(err.message);
+        res.status(401).json({ message: err.message })
+        return
+      };
+
+      res.status(200)
+        .cookie(
+          JWT_NAME_TOKEN,
+          token,
+          {
+            httpOnly: ENTORNO === 'dev' ? false : true,
+            secure: ENTORNO === 'dev' ? false : true,
+            sameSite: ENTORNO === 'dev' ? 'lax' : 'none'
+          }
+        )
+        .json({ message: 'Login successful' });
     });
   } catch (error) {
     console.log(error);
     if (error instanceof Error) {
       res.status(400).json({ message: error.message })
-    } 
+      return
+    }
     res.status(500).json({ message: 'Internal server error' });
+    return
   }
 }
 
 export const UserByToken = async (req: Request, res: Response) => {
   try {
-    const cookie = req.headers.cookie 
-    
+    const cookie = req.headers.cookie
+
     if (!cookie) {
       res.status(401).json({ message: 'Unauthorized: Missing or invalid token' });
       return;
@@ -87,38 +97,38 @@ export const UserByToken = async (req: Request, res: Response) => {
     try {
       const decoded = await verifyToken(token, JWT_SECRECT);
       res.status(200).json(decoded);
-      return 
+      return
     } catch (err) {
       if (err instanceof jwt.TokenExpiredError) {
         res.status(401).json({ message: 'Token expired' });
-        return 
+        return
       }
       res.status(401).json({ message: 'Unauthorized' });
-      return 
+      return
     }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
-    return 
+    return
   }
 }
 
 export const logoutUser = async (req: Request, res: Response) => {
-  const cookie = req.headers.cookie 
+  const cookie = req.headers.cookie
   const token = cookie?.split('=')[0]
 
   if (!token) {
     res.status(400).json({ message: 'Token not found' });
-    return 
+    return
   }
 
   try {
     res.clearCookie(token).status(200).json({ message: 'Logout successful' })
-    return 
+    return
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: 'Internal server error' })
-    return 
+    return
   }
 }
 
@@ -145,15 +155,15 @@ export const findAllUsers = async (req: Request, res: Response) => {
 
     if (users.length === 0) {
       res.status(404).json({ message: 'Users not found in database' });
-      return 
+      return
     }
 
     res.status(200).json(users);
-    return 
+    return
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: 'Internal server error' });
-    return 
+    return
   }
 }
 
@@ -164,7 +174,7 @@ export const findUserById = async (req: Request, res: Response) => {
 
     if (!result) {
       res.status(404).json({ message: 'User not found' });
-      return 
+      return
     }
 
     const user = {
@@ -185,10 +195,10 @@ export const findUserById = async (req: Request, res: Response) => {
 
 
     res.status(200).json(user);
-    return 
+    return
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', error });
-    return 
+    return
   }
 }
 
@@ -197,7 +207,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
   if (!document || !email) {
     res.status(400).json({ message: 'documento y correo son requeridos' });
-    return 
+    return
   }
 
   try {
@@ -205,7 +215,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
     if (user.dataValues.id === null) {
       res.status(404).json({ message: 'User not found' });
-      return 
+      return
     }
 
     const token = cryto.randomBytes(20).toString('hex');
@@ -215,7 +225,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
     if (result[0] === 0) {
       res.status(500).json({ message: 'Internal server error' });
-      return 
+      return
     }
 
     const response = await SendEmailRestorePassword({ email: user.dataValues.email, token });
@@ -227,10 +237,10 @@ export const forgotPassword = async (req: Request, res: Response) => {
     console.log(error);
     if (error instanceof Error) {
       res.status(400).json({ message: error.message });
-      return 
+      return
     }
     res.status(500).json({ message: 'Internal server error' });
-    return 
+    return
   }
 }
 
@@ -241,11 +251,11 @@ export const resetPassword = async (req: Request, res: Response) => {
     res.status(400).json({ message: 'token y contraseñas son requeridas' })
     return
   }
-     
+
   if (password !== confirmPassword) {
     res.status(400).json({ message: 'Las contraseñas no coinciden' })
     return
-  } 
+  }
 
   try {
     const response = await resetPasswordService(token, password)
@@ -256,13 +266,13 @@ export const resetPassword = async (req: Request, res: Response) => {
     }
 
     res.status(200).json({ message: 'Contraseña restablecida correctamente' })
-    return 
+    return
   } catch (error) {
     if (error instanceof Error) {
       res.status(400).json({ message: error.message })
       return
-    } 
+    }
     res.status(500).json('Internal server error')
-    return 
+    return
   }
 }
