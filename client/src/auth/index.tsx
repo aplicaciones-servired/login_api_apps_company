@@ -1,14 +1,6 @@
 import { getProfile, closeSession } from '@/services/profile';
 import { createContext, useEffect, useState } from 'react';
-import { User } from '@/types/User';
-
-interface AuthContextType {
-  isAuthenticated: boolean;
-  login: () => void;
-  logout: () => void;
-  user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
-}
+import { User, AuthContextType } from '@/types/User';
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
