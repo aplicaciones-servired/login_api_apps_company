@@ -4,8 +4,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import axios from 'axios';
-
 
 export default function LoginPage() {
   const [password, setPassword] = useState('')
@@ -19,22 +19,39 @@ export default function LoginPage() {
     ev.preventDefault()
     setLoading(true);
 
-    axios.post('/login', { username, password })
-      .then(res => res.status === 200 ? login() : null)
-      .catch(err => console.log(err))
-      .finally(() => setLoading(false))
+    toast.promise(
+      axios.post('/login', { username, password }),
+      {
+        loading: 'Iniciando sesión...',
+        success: (data) => {
+          if (data.status === 200) {
+            login()
+            return 'Bienvenido de nuevo!';
+          }
+          throw new Error("Error inesperado");
+        },
+        error: (err) => {
+          console.log(err);
+          return 'Error al iniciar sesión. Verifica tus credenciales.';
+        },
+        finally: () => {
+          setLoading(false)
+        }
+      }
+    )
   }
 
   return (
     <section className="w-screen h-screen flex bg-gradient-to-b">
-      <figure className='w-full'>
-        <img src="logo.webp" alt="logo para cartera" className='h-full' loading='lazy' />
+      <figure className='w-full flex items-center justify-center'>
+        <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:6rem_4rem]"><div className="absolute bottom-0 left-0 right-0 top-0 bg-[radial-gradient(circle_500px_at_50%_200px,#C9EBFF,transparent)]"></div></div>
+        <img src="userimage.png" alt="logo para cartera" className='' loading='lazy' />
       </figure>
 
       <section className='w-full grid place-content-center bg-slate-50'>
         <form className='min-w-96 flex flex-col gap-8' onSubmit={handleSubmit}>
           <figure className='flex items-center justify-center'>
-            <img src="/gane.webp" alt="logo de gane" className='w-[220px] ' loading='lazy' />
+            <img src="logogane.webp" alt="logo de gane" className='w-[220px] ' loading='lazy' />
           </figure>
           <article className='flex flex-col gap-1 text-md lg:text-lg 2xl:text-2xl'>
             <Label>Usuario: </Label>
@@ -58,14 +75,7 @@ export default function LoginPage() {
             disabled={loading}
             type='submit'
           >
-            {
-              loading ? <div className='flex items-center justify-center gap-2'>
-                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 1 1 16 0A8 8 0 0 1 4 12z"></path>
-                </svg>
-                Iniciando ...</div> : 'Iniciar Sesion'
-            }
+            Iniciar Sesion
           </Button>
 
         </form >
@@ -82,7 +92,6 @@ export default function LoginPage() {
           </a>
         </section>
       </section>
-
     </section >
   )
 };
