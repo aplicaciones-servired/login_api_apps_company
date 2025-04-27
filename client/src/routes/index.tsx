@@ -10,7 +10,10 @@ const UserPage = lazy(() => import('@/app/users'))
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <Suspense fallback={<Loading />}><Root /></Suspense>,
+    element: (
+      <Suspense fallback={<Loading />}>
+        <Root />
+      </Suspense>),
     errorElement: <NotFound />,
     children: [
       {
@@ -22,7 +25,7 @@ export const router = createBrowserRouter([
         )
       },
       {
-        path: 'users',
+        path: 'Usuarios',
         element: (
           <Suspense fallback={<Loading />}>
             <UserPage />

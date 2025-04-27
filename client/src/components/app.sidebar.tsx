@@ -14,7 +14,7 @@ const data = {
     },
     {
       title: 'Usuarios',
-      url: '/users',
+      url: '/Usuarios',
       icon: UsersIcon,
     }
   ]
