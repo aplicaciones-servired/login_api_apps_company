@@ -9,8 +9,8 @@
   ],
   "license": "MIT",
   "scripts": {
-    "start": "node --env-file=.env ./dist/index.js",
-    "dev": "tsx watch --env-file=.env ./src/index.ts",
+    "start": "bun --env-file=.env ./dist/index.js",
+    "dev": "bun run --env-file=.env --watch ./src/index.ts",
     "lint": "eslint",
     "build": "tsc"
   },
