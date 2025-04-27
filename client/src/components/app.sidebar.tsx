@@ -6,39 +6,17 @@ import { NavMain } from '@/components/nav-main'
 import { NavUser } from '@/components/nav-user'
 
 const data = {
-  user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
-  },
   navMain: [
     {
       title: 'Dashboard',
-      url: '#',
+      url: '/',
       icon: LayoutDashboardIcon,
     },
     {
       title: 'Usuarios',
-      url: '#',
+      url: '/users',
       icon: UsersIcon,
-    },
-    /*
-    {
-      title: 'Lifecycle',
-      url: '#',
-      icon: ListIcon,
-    },
-    {
-      title: 'Analytics',
-      url: '#',
-      icon: BarChartIcon,
-    },
-    {
-      title: 'Projects',
-      url: '#',
-      icon: FolderIcon,
     }
-    */
   ]
 }
 
