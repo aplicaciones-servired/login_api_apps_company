@@ -19,10 +19,9 @@ export default function Root() {
         <AppSidebar variant="inset" />
         <SidebarInset>
           <SiteHeader />
-          <Outlet />
+          <Outlet /> {/* This is where the child routes will be rendered */}
         </SidebarInset>
       </SidebarProvider>
     </ThemeProvider>
   )
 }
-
