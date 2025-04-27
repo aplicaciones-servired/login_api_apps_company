@@ -8,10 +8,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
 
-  useEffect(() => {
-    login();
-  },[])
-
   const login = async () => {
     try {
       const user = await getProfile();
@@ -40,6 +36,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.error("Error during logout:", error);
     }
   };
+
+  useEffect(() => {
+    login();
+  },[])
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, login, logout, user, setUser }}>
