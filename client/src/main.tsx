@@ -5,7 +5,7 @@ import axios from 'axios'
 import './index.css'
 
 import { router } from '@/routes'
-import { AuthProvider } from './auth'
+import { AuthProvider } from './contexts/auth'
 import { Toaster } from 'sonner'
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL

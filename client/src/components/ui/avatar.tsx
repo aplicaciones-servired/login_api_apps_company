@@ -6,19 +6,13 @@ function Avatar({ className, ...props }: ComponentProps<typeof Root>) {
   return (
     <Root
       data-slot='avatar'
-      className={cn(
-        'relative flex size-8 shrink-0 overflow-hidden rounded-full',
-        className
-      )}
+      className={cn('relative flex size-8 shrink-0 overflow-hidden rounded-full ', className)}
       {...props}
     />
   )
 }
 
-function AvatarImage({
-  className,
-  ...props
-}: React.ComponentProps<typeof Image>) {
+function AvatarImage({ className, ...props }: ComponentProps<typeof Image>) {
   return (
     <Image
       data-slot='avatar-image'
@@ -28,10 +22,7 @@ function AvatarImage({
   )
 }
 
-function AvatarFallback({
-  className,
-  ...props
-}: React.ComponentProps<typeof Fallback>) {
+function AvatarFallback({ className, ...props }: ComponentProps<typeof Fallback>) {
   return (
     <Fallback
       data-slot='avatar-fallback'

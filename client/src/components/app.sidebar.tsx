@@ -48,7 +48,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <header>
+            <header className='flex items-center gap-2'>
               <ArrowUpCircleIcon className='h-5 w-5' />
               <span className='text-base font-semibold'>Gane Multired - Servired</span>
             </header>
@@ -59,7 +59,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   )
