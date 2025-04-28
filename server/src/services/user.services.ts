@@ -5,18 +5,16 @@ import { compare, compareSync } from 'bcryptjs';
 import { ErrorMessages } from '../utils/eums';
 import { User } from '../model/user.model';
 
-export const registerUserServices = async (user: UserType) => {
+export const registerUserServices = async (user: UserType, document: number) => {
   await User.sync();
 
   const userFound = await User.findOne({ where: { document: user.document } });
 
   if (userFound) throw new Error('El usuario ya se encuentra registrado con el documento ingresado');
 
-  console.log(user.documentCreator);
-
   const creator = await User.findOne({
     attributes: ['sub_process'],
-    where: { document: user.documentCreator }
+    where: { document }
   })
 
   if (creator?.dataValues.sub_process.toString() !== '100') throw new Error('Solo El Director de Tecnología puede crear nuevos usuarios');
