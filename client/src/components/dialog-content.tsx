@@ -1,71 +1,36 @@
+import { DialogHeader, DialogTitle, DialogDescription, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, FormEvent } from 'react';
 import { OptionsCreation } from '@/types/Interfaces';
-import { DialogHeader, DialogTitle, DialogDescription, DialogContent } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { useAuth } from '@/hooks/useAuth';
+import axios from 'axios';
 
-function LazyDialogContent({ funClose, reload } : { funClose: (openDialog: boolean) => void, reload: () => void }) {
-  const { user } = useAuth()
+function LazyDialogContent({ funClose, reload }: { funClose: (openDialog: boolean) => void, reload: () => void }) {
   const [options, setOptions] = useState<OptionsCreation | null>(null)
 
-  const [formData, setFormData] = useState({
-    names: '',
-    lastNames: '',
-    document: '',
-    phone: '',
-    email: '',
-    company: '',
-    process: '',
-    sub_process: '',
-    documentCreator: user?.document
-  });
-
-  const handleChange = (key: string, value: string | number | null) => {
-    setFormData((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const formData = Object.fromEntries(new window.FormData(e.currentTarget));
+
     axios.post('/register', formData)
-     .then(res => {
+      .then(res => {
         console.log(res.data);
-        setFormData({
-          names: '',
-          lastNames: '',
-          document: '',
-          phone: '',
-          email: '',
-          company: '',
-          process: '',
-          sub_process: '',
-          documentCreator: user?.document
-        });
         funClose(false)
         reload()
         toast.success('Usuario creado correctamente', { description: 'agregado a lista de usuarios registrados' })
-     })
-     .catch(err => {
+      })
+      .catch(err => {
         console.log(err);
         if (err.response.status === 400) {
           toast.error(err.response.data.message)
         } else {
           toast.error('Error inesperado :O')
         }
-     })
+      })
   }
 
   useEffect(() => {
@@ -85,105 +50,98 @@ function LazyDialogContent({ funClose, reload } : { funClose: (openDialog: boole
       <section>
 
         <form className='grid grid-cols-3 gap-4' onSubmit={handleSubmit}>
-          <Label htmlFor='names'>Nombres</Label>
+          <Label htmlFor='names_'>Nombres</Label>
           <Input
-            id='names'
+            id='names_'
+            name='names'
             type='text'
             className='col-span-2'
             placeholder='Valeria Daniela'
-            onChange={(e) => handleChange('names', e.target.value)}
-            value={formData.names}
           />
 
-          <Label htmlFor='lastNames'>Apellidos</Label>
+          <Label htmlFor='lastNames_'>Apellidos</Label>
           <Input
-            id='lastNames'
+            id='lastNames_'
+            name='lastNames'
             type='text'
             className='col-span-2'
             placeholder='Perez Muños'
-            onChange={e => handleChange('lastNames', e.target.value)}
-            value={formData.lastNames}
           />
 
-          <Label htmlFor='document'>N° Documento</Label>
+          <Label htmlFor='document_'>N° Documento</Label>
           <Input
+            id='document_'
             type='text'
-            id='document'
+            name='document'
             className='col-span-2'
             placeholder='1118245****'
-            onChange={e => handleChange('document', e.target.value)}
-            value={formData.document}
           />
 
-          <Label htmlFor='phone'>N° Telefono</Label>
+          <Label htmlFor='phone_'>N° Telefono</Label>
           <Input
-            id='phone'
+            id='phone_'
             type='text'
+            name='phone'
             className='col-span-2'
             placeholder='320 245 67 ** **'
-            onChange={e => handleChange('phone', e.target.value)}
-            value={formData.phone}
           />
 
-          <Label htmlFor='email'>Correo</Label>
+          <Label htmlFor='email_'>Correo</Label>
           <Input
-            id='email'
+            id='email_'
             type='text'
+            name='email'
             className='col-span-2'
             placeholder='example@gmail.com '
-            onChange={e => handleChange('email', e.target.value)}
-            value={formData.email}
           />
 
-          <Label>Empresa</Label>
-          <div className='col-span-2'>
-            <Select onValueChange={(value) => handleChange('company', value)}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Selecciona empresa" />
-              </SelectTrigger>
-              <SelectContent id='company'>
-                {options?.company.map((item) => (
-                  <SelectItem key={item.value} value={item.value.toString()}>
-                    {item.label.replace('Y', ' ')}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <Label htmlFor='company_'>Empresa</Label>
+          <select
+            id='company_'
+            name='company'
+            className='border rounded-md px-2 py-1 cursor-pointer col-span-2'
+          >
+            <option value="">Seleccionar Empresa</option>
+            {
+              options?.company.map(opt => (
+                <option value={opt.value} key={opt.value}>
+                  {opt.label.replace('Y', ' ')}
+                </option>
+              ))
+            }
+          </select>
 
-          <Label>Proceso</Label>
-          <div className='col-span-2'>
-            <Select onValueChange={(value) => handleChange('process', value)}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Selecciona proceso" />
-              </SelectTrigger>
-              <SelectContent>
-                {options?.process.map((item) => (
-                  <SelectItem key={item.value} value={item.value.toString()}>
-                    {item.label.replace('_', ' ')}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <Label htmlFor='process_'>Proceso</Label>
+          <select
+            id='process_'
+            name='process'
+            className='border rounded-md px-2 py-1 cursor-pointer col-span-2'
+          >
+            <option value="">Seleccionar Proceso</option>
 
-          <Label>Cargo</Label>
-          <div className='col-span-2'>
-            <Select onValueChange={(value) => handleChange('sub_process', value)}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Selecciona cargo" />
-              </SelectTrigger>
-              <SelectContent>
-                {options?.sub_process.map((item) => (
-                  <SelectItem key={item.value} value={item.value.toString()} className='capitalize'>
-                    {item.label.replace('_', ' ')}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+            {options?.process.map((item) => (
+              <option key={item.value} value={item.value.toString()}>
+                {item.label.replace('_', ' ')}
+              </option>
+            ))}
+          </select>
 
-          <Button type='submit' className=''>
+          <Label htmlFor='sub_process_'>Cargo</Label>
+
+          <select
+            id='sub_process_'
+            name='sub_process'
+            className='border rounded-md px-2 py-1 cursor-pointer col-span-2'
+          >
+            <option value="">Seleccionar Cargo</option>
+            {options?.sub_process.map((item) => (
+              <option key={item.value} value={item.value.toString()} className='capitalize'>
+                {item.label.replace('_', ' ')}
+              </option>
+            ))}
+          </select>
+
+          <Button type='submit'>
             Crear Usuario
           </Button>
         </form>
