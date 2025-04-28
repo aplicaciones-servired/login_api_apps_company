@@ -35,13 +35,14 @@ export const optionsUser = async (req: Request, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
   const { success, data, error } = await validateUser(req.body)
+  const document = req.user.document
 
   if (!success) {
     res.status(400).json({ message: error.issues[0].message })
     return
   }
   try {
-    await registerUserServices(data)
+    await registerUserServices(data, document)
     res.status(201).json('Usuario creado correctamente')
     return
   } catch (error) {
