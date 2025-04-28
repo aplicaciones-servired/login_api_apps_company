@@ -34,11 +34,7 @@ const User = z.object({
   sub_process: z.string({
     invalid_type_error: 'El sub-proceso es requerido',
     required_error: 'El sub proceso es requerido',
-  }).transform((val) => parseInt(val, 10)).refine((value) => !isNaN(value)),
-  documentCreator: z.number({
-    invalid_type_error: 'El document Creator es requerido',
-    required_error: 'El document Creator es requerido',
-  })
+  }).transform((val) => parseInt(val, 10)).refine((value) => !isNaN(value))
 });
 
 const UserLogin = z.object({
