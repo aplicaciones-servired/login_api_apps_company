@@ -127,7 +127,6 @@ function LazyDialogContent({ funClose, reload }: { funClose: (openDialog: boolea
           </select>
 
           <Label htmlFor='sub_process_'>Cargo</Label>
-
           <select
             id='sub_process_'
             name='sub_process'

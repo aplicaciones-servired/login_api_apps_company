@@ -93,14 +93,14 @@ export default function UsersPage() {
                         <EllipsisVertical />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
-                        <DropdownMenuItem>Ver detallado</DropdownMenuItem>
-                        <DropdownMenuItem>Editar</DropdownMenuItem>
+                        <DropdownMenuItem disabled>Ver detallado</DropdownMenuItem>
+                        <DropdownMenuItem disabled>Editar</DropdownMenuItem>
                         <DropdownMenuItem 
                           onClick={() => handleToggleState(u.id, u.state)}
                           className={`${u.state === 'Activo' ? 'text-red-400 ' : 'text-green-400'} hover:font-semibold`}>
                           {u.state === 'Activo' ? 'Inactivar' : 'Activar'}
                         </DropdownMenuItem>
-                        <DropdownMenuItem>Borrar</DropdownMenuItem>
+                        <DropdownMenuItem disabled>Borrar</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
