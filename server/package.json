@@ -1,0 +1,43 @@
+{
+  "name": "login_unificado",
+  "version": "2.1.0",
+  "main": "index.js",
+  "repository": "https://github.com/AplicacionesMultired/login_unificado.git",
+  "author": "llOrTeGall <IvanOrtega_97@hotmail.com>",
+  "collaborators": [
+    "Cebastian Perez <cebastian@gmail.com>"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "start": "bun --env-file=.env ./dist/index.js",
+    "dev": "bun run --env-file=.env --watch ./src/index.ts",
+    "lint": "eslint",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.14.0",
+    "nodemailer": "^6.10.1",
+    "sequelize": "^6.37.7",
+    "zod": "^3.24.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.25.1",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.1",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^22.14.1",
+    "@types/nodemailer": "^6.4.17",
+    "eslint": "^9.25.1",
+    "globals": "^15.15.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.31.0"
+  }
+}
