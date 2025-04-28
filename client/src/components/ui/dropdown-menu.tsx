@@ -21,11 +21,10 @@ function DropdownMenuPortal({
   )
 }
 
-function DropdownMenuTrigger({
-  ...props
-}: ComponentProps<typeof Trigger>) {
+function DropdownMenuTrigger({ ...props }: ComponentProps<typeof Trigger>) {
   return (
     <Trigger
+      className='cursor-pointer hover:text-red-500 transition-all'
       data-slot='dropdown-menu-trigger'
       {...props}
     />

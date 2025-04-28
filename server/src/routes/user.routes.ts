@@ -1,5 +1,5 @@
 import { authenticateToken } from '../middlewares/authToken';
-import { createUser, loginUser, logoutUser, UserByToken, findAllUsers, findUserById, forgotPassword, resetPassword, optionsUser } from '../controllers/user.controllers'
+import { createUser, loginUser, logoutUser, UserByToken, findAllUsers, findUserById, forgotPassword, resetPassword, optionsUser, changeState } from '../controllers/user.controllers'
 import { Router } from 'express';
 
 export const userRouter = Router();
@@ -19,5 +19,7 @@ userRouter.get('/users', authenticateToken, findAllUsers)
 userRouter.get('/user/:id', authenticateToken, findUserById)
 
 userRouter.post('/auth/forgot-password', forgotPassword)
+
+userRouter.post('/changestate', authenticateToken, changeState)
 
 userRouter.post('/auth/reset-password', resetPassword)

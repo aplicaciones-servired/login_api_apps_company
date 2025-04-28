@@ -1,4 +1,4 @@
-import { findUserServices, loginUserServices, registerUserServices, findUserServicesById, forgotPasswordServices, asignTokenServices, resetPasswordService } from '../services/user.services';
+import { findUserServices, loginUserServices, registerUserServices, findUserServicesById, forgotPasswordServices, asignTokenServices, resetPasswordService, updateState } from '../services/user.services';
 import { JWT_SECRECT, ENTORNO, JWT_NAME_TOKEN } from '../configs/envSchema';
 import { validateUser, validateUserLogin } from '../Schemas/UserSchema';
 import { Company, Process, State, SubProcess } from '../enum/enums';
@@ -51,6 +51,16 @@ export const createUser = async (req: Request, res: Response) => {
     }
     res.status(500).json({ message: 'Internal server error' })
     return
+  }
+}
+
+export const changeState = async(req: Request, res: Response) => {
+  try {
+    const data = req.body
+    const update = await updateState(data.id, data.newState)
+    res.status(200).json({ document: update})
+  } catch (error) {
+    res.status(500).json('Error al intentar actualizar el estado del usuario')
   }
 }
 
