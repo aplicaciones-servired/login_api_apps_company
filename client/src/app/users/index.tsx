@@ -1,18 +1,20 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
-import { DialogUserCreate } from '@/components/dialog-comp'
-import { useEffect, useState } from 'react'
+} from '@/components/ui/dropdown-menu';
 
-import { UserI } from '@/types/User'
-import axios from 'axios'
-import { EllipsisVertical } from 'lucide-react'
-import { toast } from 'sonner'
+import { DialogUserCreate } from '@/components/dialog-comp';
+import { useEffect, useState } from 'react';
+
+import { EllipsisVertical } from 'lucide-react';
+import { UserI } from '@/types/User';
+import { toast } from 'sonner';
+import axios from 'axios';
 
 export default function UsersPage() {
   const [user, setUser] = useState<UserI[]>([])
@@ -39,6 +41,10 @@ export default function UsersPage() {
       })
   }
 
+  const handleToggleState = (id: string, currentState: string) => {
+    handleInactivar(id, currentState === 'Activo' ? '0' : '1');
+  };
+
   useEffect(() => {
     axios.get('/users')
       .then(res => {
@@ -49,7 +55,6 @@ export default function UsersPage() {
         console.error(err);
       })
   }, [reload])
-
 
   return (
     <section className=''>
@@ -91,7 +96,7 @@ export default function UsersPage() {
                         <DropdownMenuItem>Ver detallado</DropdownMenuItem>
                         <DropdownMenuItem>Editar</DropdownMenuItem>
                         <DropdownMenuItem 
-                          onClick={() => handleInactivar(u.id, u.state === 'Activo' ? '0' : '1')}
+                          onClick={() => handleToggleState(u.id, u.state)}
                           className={`${u.state === 'Activo' ? 'text-red-400 ' : 'text-green-400'} hover:font-semibold`}>
                           {u.state === 'Activo' ? 'Inactivar' : 'Activar'}
                         </DropdownMenuItem>
