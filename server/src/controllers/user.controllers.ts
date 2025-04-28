@@ -8,6 +8,31 @@ import { Request, Response } from 'express';
 import cryto from 'node:crypto';
 import jwt from 'jsonwebtoken';
 
+export const optionsUser = async (req: Request, res: Response) => {
+  try {
+    const options = {
+      company: Object.entries(Company)
+        .filter(([key, value]) => !isNaN(Number(value))) // Filtra solo los valores numéricos
+        .map(([key, value]) => ({ label: key, value: Number(value) })), // Usa la clave como label y el valor numérico como value
+
+      process: Object.entries(Process)
+        .filter(([key, value]) => !isNaN(Number(value)))
+        .map(([key, value]) => ({ label: key, value: Number(value) })),
+
+      sub_process: Object.entries(SubProcess)
+        .filter(([key, value]) => !isNaN(Number(value)))
+        .map(([key, value]) => ({ label: key, value: Number(value) })),
+    };
+
+    res.status(200).json(options);
+    return;
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Internal server error' });
+    return;
+  }
+};
+
 export const createUser = async (req: Request, res: Response) => {
   const { success, data, error } = await validateUser(req.body)
 

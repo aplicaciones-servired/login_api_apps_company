@@ -32,7 +32,7 @@ export enum SubProcess {
   aux_contable = 3,
   aux_administrativo = 4,
   Gerente = 5,
-  Sub_proceso_7 = 6,
+  Asistente_Comercial = 6,
   Sub_proceso_8 = 7,
   Sub_proceso_9 = 8,
   Sub_proceso_10 = 9,
@@ -56,5 +56,6 @@ export enum SubProcess {
   Sub_proceso_28 = 27,
   Sub_proceso_29 = 28,
   Sub_proceso_30 = 29,
-  Sub_proceso_31 = 30
+  Sub_proceso_31 = 30,
+  Director_Tecnologia = 100
 }

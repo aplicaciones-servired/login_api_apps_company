@@ -1,9 +1,9 @@
 import { comparePasswords, generatePassword, generateUsername, hashNewPassword } from '../utils/funtions';
 import { ValidationErrorItem, UniqueConstraintError } from 'sequelize';
 import { UserType, UserLoginType } from '../Schemas/UserSchema';
+import { compare, compareSync } from 'bcryptjs';
 import { ErrorMessages } from '../utils/eums';
 import { User } from '../model/user.model';
-import { compare, compareSync } from 'bcryptjs';
 
 export const registerUserServices = async (user: UserType) => {
   await User.sync();
@@ -11,6 +11,16 @@ export const registerUserServices = async (user: UserType) => {
   const userFound = await User.findOne({ where: { document: user.document } });
 
   if (userFound) throw new Error('El usuario ya se encuentra registrado con el documento ingresado');
+
+  console.log(user.documentCreator);
+
+  const creator = await User.findOne({ 
+    attributes: ['sub_process'],
+    where: { document: user.documentCreator }
+  } )
+  
+  if(creator?.dataValues.sub_process.toString() !== '100') throw new Error('Solo El Director de Tecnología puede crear nuevos usuarios');
+  if(user.sub_process === 100) throw new Error('Ya existe un super usuario (Director Tecnología)')
 
   const username = generateUsername(user.document.toString());
   const password = await generatePassword(user.document.toString());
@@ -54,7 +64,10 @@ export const getUserByToken = async (token: string) => {
 }
 
 export const findUserServices = async () => {
-  const users = await User.findAll({ attributes: { exclude: ['password', 'password2', 'resetPasswordToken', 'resetPasswordExpires'] } });
+  const users = await User.findAll({ 
+    attributes: { exclude: ['password', 'password2', 'resetPasswordToken', 'resetPasswordExpires'] }, 
+    order: [['names', 'ASC']]
+  });
   return users;
 }
 

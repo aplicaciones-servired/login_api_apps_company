@@ -1,8 +1,10 @@
 import { authenticateToken } from '../middlewares/authToken';
-import { createUser, loginUser, logoutUser, UserByToken, findAllUsers, findUserById, forgotPassword, resetPassword } from '../controllers/user.controllers'
+import { createUser, loginUser, logoutUser, UserByToken, findAllUsers, findUserById, forgotPassword, resetPassword, optionsUser } from '../controllers/user.controllers'
 import { Router } from 'express';
 
 export const userRouter = Router();
+
+userRouter.get('/newUserOptions', authenticateToken, optionsUser)
 
 userRouter.post('/register', authenticateToken, createUser)
 
