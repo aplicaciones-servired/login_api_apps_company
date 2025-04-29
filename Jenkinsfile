@@ -3,6 +3,7 @@ pipeline {
 
     tools {
       nodejs 'node-v22'
+      PATH = "$HOME/.bun/bin:$PATH"
     }
 
     environment {
@@ -41,15 +42,11 @@ pipeline {
         steps {
           script {
               // Asegurarse de que Bun esté en el PATH
-              sh '''
-              export PATH="$HOME/.bun/bin:$PATH"
-              '''
-          }
-
-          dir('client'){
-            sh 'bun install'
-            sh 'bun run build'
-          }
+            dir('client'){
+                sh 'bun install'
+                sh 'bun run build'
+              }
+           }
         }
       }
 
