@@ -36,8 +36,9 @@ export default function UsersPage() {
       }
       )
       .catch(err => {
-        console.log(err);
-        toast.error('No se pudo modificar el estado del usuario')
+        if(err.response.status === 400){
+          toast.error(err.response.data.message)
+        }
       })
   }
 
