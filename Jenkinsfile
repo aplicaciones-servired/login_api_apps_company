@@ -11,7 +11,7 @@ pipeline {
         steps {
           script {
             def envApiContent = readFile(ENV_API_LOGIN)
-            writeFile file: './.env', text: envApiContent
+            writeFile file: './server/.env', text: envApiContent
           }
         }
       }
