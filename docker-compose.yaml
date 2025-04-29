@@ -15,11 +15,11 @@ services:
 
   api-login-v2:
     build:
-      context: .
+      context: ./server
       dockerfile: Dockerfile
-    image: api-login:v2.1
+    image: api-login:v2.2
     restart: always
-    container_name: api_login_v1
+    container_name: api_login_v2
     environment:
       - TZ=America/Bogota
     networks:
