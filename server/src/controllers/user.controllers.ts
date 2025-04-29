@@ -58,7 +58,8 @@ export const createUser = async (req: Request, res: Response) => {
 export const changeState = async(req: Request, res: Response) => {
   try {
     const data = req.body
-    const update = await updateState(data.id, data.newState)
+    const document = req.user.document
+    const update = await updateState(data.id, data.newState, document)
     res.status(200).json({ document: update})
   } catch (error) {
     res.status(500).json('Error al intentar actualizar el estado del usuario')
