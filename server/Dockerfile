@@ -8,7 +8,7 @@ COPY . .
 
 RUN npm install -g bun
 
-RUN bun install && bun --run build
+RUN bun install && bun run build
 
 EXPOSE 80
 
