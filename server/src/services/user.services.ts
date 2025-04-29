@@ -77,29 +77,24 @@ export const findUserServicesById = async (id: string) => {
 export const updateState = async (id: string, newState: string, document: number) => {
   const state = newState === '0' ? false : true
 
-  try {
-    const updateAdm = await User.findOne({
-      attributes: ['sub_process'],
-      where: { document }
-    })
+  const updateAdm = await User.findOne({
+    attributes: ['sub_process'],
+    where: { document }
+  })
 
-    if (updateAdm?.dataValues.sub_process.toString() !== '100') throw new Error('Solo El Director de Tecnología puede cambiar estado');
+  if (updateAdm?.dataValues.sub_process.toString() !== '100') throw new Error('Solo El Director de Tecnología puede cambiar estado');
 
-    const userUpdate = await User.update({ state }, { where: { id } })
+  const userUpdate = await User.update({ state }, { where: { id } })
 
-    if(userUpdate[0] === 1 ){
-      const findUserById = await User.findByPk(id)
+  if (userUpdate[0] === 1) {
+    const findUserById = await User.findByPk(id)
 
-      if(!findUserById){
-        throw new Error('Usuario que se actualizó, no se encontro ')
-      }
-      return findUserById.dataValues.document
-    } else {
-      throw new Error('No se pudo realizar el cambio de estado validar nuevamente')
+    if (!findUserById) {
+      throw new Error('Usuario que se actualizó, no se encontro ')
     }
-  } catch (error) {
-    console.log(error);
-    throw new Error('No se pudo actualizar el usuario')
+    return findUserById.dataValues.document
+  } else {
+    throw new Error('No se pudo realizar el cambio de estado validar nuevamente')
   }
 }
 
