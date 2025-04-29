@@ -1,13 +1,9 @@
 pipeline {
     agent any
 
-    tools {
-      nodejs 'node-v22'
-      PATH = "$HOME/.bun/bin:$PATH"
-    }
-
     environment {
       ENV_API_LOGIN = credentials('ENV_API_LOGIN')
+      PATH = "$HOME/.bun/bin:$PATH"
     }
 
     stages {
