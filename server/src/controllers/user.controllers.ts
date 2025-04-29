@@ -62,6 +62,10 @@ export const changeState = async(req: Request, res: Response) => {
     const update = await updateState(data.id, data.newState, document)
     res.status(200).json({ document: update})
   } catch (error) {
+    if(error instanceof Error){
+      res.status(400).json({ message: error.message})
+      return
+    }
     res.status(500).json('Error al intentar actualizar el estado del usuario')
   }
 }
