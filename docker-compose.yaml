@@ -1,13 +1,25 @@
-version: '3.7'
+version: '3'
 
 services:
-  api-login-v1:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: login:v1.0
+  web-users-adm:
+    image: nginx:stable-alpine3.19-slim
     restart: always
-    container_name: api_login_v1
+    container_name: web-adm-users
+    volumes:
+      - ./client/dist:/usr/share/nginx/html
+      - ./config/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - api-login-v2
+    networks:
+      - red-gane-int
+
+  api-login-v2:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    image: api-login:v2.2
+    restart: always
+    container_name: api_login_v2
     environment:
       - TZ=America/Bogota
     networks:
