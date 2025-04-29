@@ -53,19 +53,19 @@ pipeline {
         }
       }
 
-      stage('delete images if exist') {
-        steps {
-          script {
-            def images = 'api-login:v2.1'
-            if (sh(script: "docker images -q ${images}", returnStdout: true).trim()) {
-              sh "sudo docker rmi ${images}"
-                      } else {
-              echo "Image ${images} does not exist."
-              echo 'continuing...'
-            }
-          }
-        }
-      }
+//      stage('delete images if exist') {
+//        steps {
+//          script {
+//            def images = 'api-login:v2.1'
+//            if (sh(script: "docker images -q ${images}", returnStdout: true).trim()) {
+//              sh "sudo docker rmi ${images}"
+//                      } else {
+//              echo "Image ${images} does not exist."
+//              echo 'continuing...'
+//            }
+//          }
+//        }
+//      }
 
       stage('run docker compose') {
         steps {
