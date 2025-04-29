@@ -1,4 +1,4 @@
-FROM node:lts
+FROM node:latest
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -6,8 +6,10 @@ WORKDIR /usr/src/app
 # Install app dependencies
 COPY . .
 
-RUN npm install && node --run build
+RUN npm install -g bun
+
+RUN bun install && bun --run build
 
 EXPOSE 80
 
-CMD [ "npm", "start" ]
+CMD [ "bun", "start" ]
