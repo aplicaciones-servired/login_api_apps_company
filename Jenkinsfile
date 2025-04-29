@@ -39,15 +39,14 @@ pipeline {
       }
 
       stage('Build Frontend with Bun') {
-        steps {
-          script {
-              // Asegurarse de que Bun esté en el PATH
-            dir('client'){
-                sh 'bun install'
-                sh 'bun run build'
+          steps {
+              script{
+                  dir('client'){
+                      sh 'bun install'
+                      sh 'bun run build'
+                  }
               }
-           }
-        }
+          }
       }
 
       stage('down docker compose') {
