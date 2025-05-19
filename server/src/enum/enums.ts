@@ -56,6 +56,6 @@ export enum SubProcess {
   Sub_proceso_28 = 27,
   Sub_proceso_29 = 28,
   Sub_proceso_30 = 29,
-  Sub_proceso_31 = 30,
+  monitoreo = 30,
   Director_Tecnologia = 100
 }
