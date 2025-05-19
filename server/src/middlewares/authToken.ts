@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { JWT_SECRECT } from '../configs/envSchema';
+import { verifyToken } from '../services/verifyToken';
+import { TokenExpiredError } from 'jsonwebtoken';
 import { User } from '../model/user.model';
-import jwt from 'jsonwebtoken';
 
 declare global {
   namespace Express {
@@ -10,15 +10,6 @@ declare global {
     }
   }
 }
-
-const verifyToken = (token: string): Promise<User> => {
-  return new Promise((resolve, reject) => {
-    jwt.verify(token, JWT_SECRECT, (err, decoded) => {
-      if (err) return reject(err);
-      resolve(decoded as User);
-    });
-  });
-};
 
 export const authenticateToken = async (req: Request, res: Response, next: NextFunction) => {
   const cookie = req.headers.cookie 
@@ -33,7 +24,7 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     req.user = user
     next();
   } catch (err) {
-    if (err instanceof jwt.TokenExpiredError) {
+    if (err instanceof TokenExpiredError) {
       res.status(401).json({ message: 'Token expired' });
       return 
     }
