@@ -1,6 +1,8 @@
 pipeline {
     agent any
 
+    tools { nodejs 'node-v22' }
+
     environment {
       ENV_API_LOGIN = credentials('ENV_API_LOGIN')
     }
