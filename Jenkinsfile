@@ -3,7 +3,6 @@ pipeline {
 
     environment {
       ENV_API_LOGIN = credentials('ENV_API_LOGIN')
-      PATH = "$HOME/.bun/bin:$PATH"
     }
 
     stages {
@@ -16,34 +15,19 @@ pipeline {
         }
       }
 
-      stage('Install Bun') {
+      stage('Install Dependencies client and server') {
         steps {
-          script {
-              // Instalar Bun si no está ya instalado
-              sh '''
-              if ! command -v bun &> /dev/null; then
-                  echo "Bun no está instalado. Instalando..."
-                  curl -fsSL https://bun.sh/install | bash
-                  export PATH="$HOME/.bun/bin:$PATH"
-                  echo "Bun instalado correctamente."
-              else
-                  echo "Bun ya está instalado."
-              fi
-              '''
+          dir('client') {
+            sh 'bun install'
+            sh 'bun run build'
+          }
+          dir('server') {
+            sh 'bun install'
+            sh 'bun run build'
           }
         }
       }
 
-      stage('Build Frontend with Bun') {
-          steps {
-              script{
-                  dir('client'){
-                      sh 'bun install'
-                      sh 'bun run build'
-                  }
-              }
-          }
-      }
 
       stage('down docker compose') {
         steps {
