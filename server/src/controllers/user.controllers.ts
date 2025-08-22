@@ -3,10 +3,10 @@ import { JWT_SECRECT, ENTORNO, JWT_NAME_TOKEN } from '../configs/envSchema';
 import { validateUser, validateUserLogin } from '../Schemas/UserSchema';
 import { Company, Process, State, SubProcess } from '../enum/enums';
 import { SendEmailRestorePassword } from '../services/nodemailer';
-import { verifyToken } from '../utils/verifyToken';
+import { verifyToken } from '../services/verifyToken';
+import { TokenExpiredError, sign } from 'jsonwebtoken';
 import { Request, Response } from 'express';
 import cryto from 'node:crypto';
-import jwt from 'jsonwebtoken';
 
 export const optionsUser = async (req: Request, res: Response) => {
   try {
@@ -94,7 +94,7 @@ export const loginUser = async (req: Request, res: Response) => {
       state: State[user.state === true ? 0 : 1]
     }
 
-    jwt.sign(usuario, JWT_SECRECT, { expiresIn: '2h' }, (err, token) => {
+    sign(usuario, JWT_SECRECT, { expiresIn: '2h' }, (err, token) => {
       if (err) {
         console.log(err.message);
         res.status(401).json({ message: err.message })
@@ -136,11 +136,11 @@ export const UserByToken = async (req: Request, res: Response) => {
     const token = cookie.split('=')[1];
 
     try {
-      const decoded = await verifyToken(token, JWT_SECRECT);
+      const decoded = await verifyToken(token);
       res.status(200).json(decoded);
       return
     } catch (err) {
-      if (err instanceof jwt.TokenExpiredError) {
+      if (err instanceof TokenExpiredError) {
         res.status(401).json({ message: 'Token expired' });
         return
       }
