@@ -111,7 +111,7 @@ export const loginUser = async (req: Request, res: Response) => {
             sameSite: ENTORNO === 'dev' ? 'lax' : 'none'
           }
         )
-        .json({ message: 'Login successful' });
+        .json({ message: 'Login successful', company: usuario.company, user: usuario });
     });
   } catch (error) {
     console.log(error);

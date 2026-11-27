@@ -9,12 +9,12 @@
   ],
   "license": "MIT",
   "scripts": {
-    "start": "node --env-file=.env ./dist/index.js",
-    "dev": "bun run --env-file=.env --watch ./src/index.ts",
+    "dev": "bun run --env-file=.env --watch ./src/index.ts vite --host 0.0.0.0",
     "lint": "eslint",
     "build": "tsc"
   },
   "dependencies": {
+    "@types/axios": "^0.9.36",
     "bcryptjs": "^3.0.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
